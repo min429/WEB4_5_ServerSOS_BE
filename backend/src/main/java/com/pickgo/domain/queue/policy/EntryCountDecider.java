@@ -34,6 +34,6 @@ public class EntryCountDecider {
 
         // 비율 계산
         double ratio = (double)(tps - minTps) / (maxTps - minTps); // 현재 TPS가 어느 위치인지에 대한 비율
-        return (int)Math.round(minCnt + ratio * (maxCnt - minCnt)); // 해당 비율에 따라 입장 인원 계산
+        return (int)Math.round(maxCnt - ratio * (maxCnt - minCnt)); // 해당 비율에 따라 입장 인원 계산
     }
 }

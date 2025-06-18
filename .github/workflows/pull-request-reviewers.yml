@@ -17,5 +17,5 @@ jobs:
         uses: hkusu/review-assign-action@v1
         with:
           assignees: ${{ github.actor }}
-          reviewers: min429, asungkim, jin214930, JunKiBeom, chohyunwoo
+          reviewers: min429
           draft-keyword: wip
