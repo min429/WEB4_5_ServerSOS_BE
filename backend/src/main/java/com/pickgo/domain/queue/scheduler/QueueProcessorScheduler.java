@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QueueProcessorScheduler {
 
-    private static long intervalMillis = 1000; // 주기(ms)
+    private static volatile long intervalMillis = 1000; // 주기(ms)
     private static volatile int entryCount = 10; // 주기마다 입장할 인원 수
     private final QueueService queueService;
     private ScheduledFuture<?> scheduledTask;
