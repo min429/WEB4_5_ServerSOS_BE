@@ -17,6 +17,8 @@ jobs:
         image: redis:7
         ports:
           - 6379:6379
+        command:
+          ["redis-server", "--requirepass", "${{ secrets.REDIS_PASSWORD }}"]
     steps:
       - uses: actions/checkout@v3
 
