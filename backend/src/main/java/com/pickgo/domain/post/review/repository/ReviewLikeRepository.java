@@ -1,12 +1,13 @@
 package com.pickgo.domain.post.review.repository;
 
-import com.pickgo.domain.member.member.entity.Member;
-import com.pickgo.domain.post.review.entity.Review;
-import com.pickgo.domain.post.review.entity.ReviewLike;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.pickgo.domain.member.member.entity.Member;
+import com.pickgo.domain.post.review.entity.Review;
+import com.pickgo.domain.post.review.entity.ReviewLike;
 
 @Repository
 public interface ReviewLikeRepository extends JpaRepository<ReviewLike, Long> {

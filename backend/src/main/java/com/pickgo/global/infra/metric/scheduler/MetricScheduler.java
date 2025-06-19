@@ -17,14 +17,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MetricScheduler {
 
-    private final AtomicLong lastCount = new AtomicLong(0); // 직전까지 누적 요청 수
-    private final MeterRegistry meterRegistry;
-    private final RedisMetricRepository redisMetricsRepository;
-
     private static final Set<String> EXCLUDED_URIS = Set.of(
         "/api/queue/stream",
         "/api/areas/subscribe"
     );
+    private final AtomicLong lastCount = new AtomicLong(0); // 직전까지 누적 요청 수
+    private final MeterRegistry meterRegistry;
+    private final RedisMetricRepository redisMetricsRepository;
 
     /**
      * 누적 카운터 기반 TPS 계산

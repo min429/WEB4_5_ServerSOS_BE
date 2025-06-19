@@ -10,15 +10,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pickgo.domain.member.member.entity.Member;
+import com.pickgo.domain.member.member.entity.enums.Authority;
+import com.pickgo.domain.member.member.entity.enums.SocialProvider;
+import com.pickgo.domain.member.member.repository.MemberRepository;
 import com.pickgo.domain.performance.area.area.entity.AreaGrade;
 import com.pickgo.domain.performance.area.area.entity.AreaName;
 import com.pickgo.domain.performance.area.area.entity.PerformanceArea;
 import com.pickgo.domain.performance.area.area.repository.PerformanceAreaRepository;
 import com.pickgo.domain.performance.area.seat.repository.ReservedSeatRepository;
-import com.pickgo.domain.member.member.entity.Member;
-import com.pickgo.domain.member.member.entity.enums.Authority;
-import com.pickgo.domain.member.member.entity.enums.SocialProvider;
-import com.pickgo.domain.member.member.repository.MemberRepository;
 import com.pickgo.domain.performance.performance.entity.Performance;
 import com.pickgo.domain.performance.performance.entity.PerformanceSession;
 import com.pickgo.domain.performance.performance.entity.PerformanceState;
@@ -52,12 +52,12 @@ public class TestDataInit {
 
     @Autowired
     public TestDataInit(
-            MemberRepository memberRepository,
-            VenueRepository venueRepository,
-            PerformanceRepository performanceRepository,
-            PerformanceSessionRepository sessionRepository,
-            PerformanceAreaRepository areaRepository,
-            ReservedSeatRepository seatRepository
+        MemberRepository memberRepository,
+        VenueRepository venueRepository,
+        PerformanceRepository performanceRepository,
+        PerformanceSessionRepository sessionRepository,
+        PerformanceAreaRepository areaRepository,
+        ReservedSeatRepository seatRepository
     ) {
         this.memberRepository = memberRepository;
         this.venueRepository = venueRepository;
@@ -74,58 +74,58 @@ public class TestDataInit {
 
         // 2. Member 저장
         Member member = memberRepository.save(Member.builder()
-                .id(userId)
-                .email("test@example.com")
-                .password(passwordEncoder.encode("test_password"))
-                .nickname("test_user")
-                .authority(Authority.USER)
-                .socialProvider(SocialProvider.NONE)
-                .build());
+            .id(userId)
+            .email("test@example.com")
+            .password(passwordEncoder.encode("test_password"))
+            .nickname("test_user")
+            .authority(Authority.USER)
+            .socialProvider(SocialProvider.NONE)
+            .build());
 
         // 2. 공연장
         Venue venue = venueRepository.findByNameAndAddress("테스트 공연장", "서울시 테스트구")
-                .orElseGet(() -> venueRepository.save(
-                        Venue.builder()
-                                .name("테스트 공연장")
-                                .address("서울시 테스트구")
-                                .build()
-                ));
+            .orElseGet(() -> venueRepository.save(
+                Venue.builder()
+                    .name("테스트 공연장")
+                    .address("서울시 테스트구")
+                    .build()
+            ));
 
         // 3. 공연
         Performance performance = performanceRepository.save(
-                Performance.builder()
-                        .name("테스트 공연")
-                        .startDate(LocalDate.now())
-                        .endDate(LocalDate.now().plusDays(1))
-                        .runtime("120분")
-                        .poster("test.jpg")
-                        .state(PerformanceState.SCHEDULED)
-                        .minAge("전체관람가")
-                        .casts("홍길동 외")
-                        .type(PerformanceType.MUSICAL)
-                        .venue(venue)
-                        .build()
+            Performance.builder()
+                .name("테스트 공연")
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(1))
+                .runtime("120분")
+                .poster("test.jpg")
+                .state(PerformanceState.SCHEDULED)
+                .minAge("전체관람가")
+                .casts("홍길동 외")
+                .type(PerformanceType.MUSICAL)
+                .venue(venue)
+                .build()
         );
 
         // 4. 공연 세션
         PerformanceSession session = sessionRepository.save(
-                PerformanceSession.builder()
-                        .performance(performance)
-                        .performanceTime(LocalDateTime.now().plusDays(1))
-                        .reserveOpenAt(LocalDateTime.now().minusDays(10))
-                        .build()
+            PerformanceSession.builder()
+                .performance(performance)
+                .performanceTime(LocalDateTime.now().plusDays(1))
+                .reserveOpenAt(LocalDateTime.now().minusDays(10))
+                .build()
         );
 
         // 5. 구역
         PerformanceArea area = areaRepository.save(
-                PerformanceArea.builder()
-                        .performance(performance)
-                        .name(AreaName.A)
-                        .grade(AreaGrade.ROYAL)
-                        .price(10000)
-                        .rowCount(15)
-                        .colCount(10)
-                        .build()
+            PerformanceArea.builder()
+                .performance(performance)
+                .name(AreaName.A)
+                .grade(AreaGrade.ROYAL)
+                .price(10000)
+                .rowCount(15)
+                .colCount(10)
+                .build()
         );
 
         return new TestData(member, session, area);

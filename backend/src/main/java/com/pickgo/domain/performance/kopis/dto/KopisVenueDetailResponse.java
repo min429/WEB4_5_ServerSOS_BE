@@ -5,9 +5,9 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record KopisVenueDetailResponse(
-        @JacksonXmlProperty(localName = "fcltynm")
-        String name,
-        @JacksonXmlProperty(localName = "adres")
-        String address
+    @JacksonXmlProperty(localName = "fcltynm")
+    String name,
+    @JacksonXmlProperty(localName = "adres")
+    String address
 ) {
 }

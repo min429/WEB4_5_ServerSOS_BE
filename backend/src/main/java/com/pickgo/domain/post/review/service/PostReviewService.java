@@ -1,5 +1,19 @@
 package com.pickgo.domain.post.review.service;
 
+import static com.pickgo.global.response.RsCode.*;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.pickgo.domain.member.member.dto.MemberPrincipal;
 import com.pickgo.domain.member.member.entity.Member;
 import com.pickgo.domain.member.member.repository.MemberRepository;
@@ -14,20 +28,8 @@ import com.pickgo.domain.post.review.repository.ReviewLikeRepository;
 import com.pickgo.global.exception.BusinessException;
 import com.pickgo.global.jwt.JwtProvider;
 import com.pickgo.global.response.RsCode;
+
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-import static com.pickgo.global.response.RsCode.UNAUTHENTICATED;
 
 @Service
 @RequiredArgsConstructor
@@ -51,12 +53,12 @@ public class PostReviewService {
      */
     @Transactional(readOnly = true)
     public List<PostReviewWithLikeResponse> getReviewsByPostId(
-            Long postId,
-            Long cursorId,
-            int cursorLikeCount,
-            int size,
-            String sort,
-            String authHeader
+        Long postId,
+        Long cursorId,
+        int cursorLikeCount,
+        int size,
+        String sort,
+        String authHeader
     ) {
         // 1. 리뷰 목록 조회
         List<Review> reviews = fetchReviews(postId, cursorId, cursorLikeCount, size, sort);
@@ -85,7 +87,7 @@ public class PostReviewService {
                     throw new BusinessException(UNAUTHENTICATED);
                 }
                 Authentication auth = jwtProvider.getAuthentication(token);
-                MemberPrincipal principal = (MemberPrincipal) auth.getPrincipal();
+                MemberPrincipal principal = (MemberPrincipal)auth.getPrincipal();
                 return getMemberById(principal.id());
             } catch (Exception ignored) {
                 return null;
@@ -96,11 +98,11 @@ public class PostReviewService {
 
     private List<PostReviewWithLikeResponse> responseWithLikes(List<Review> reviews, Member currentUser) {
         return reviews.stream()
-                .map(r -> {
-                    boolean liked = currentUser != null && reviewLikeRepository.existsByMemberAndReview(currentUser, r);
-                    return PostReviewWithLikeResponse.fromEntity(r, liked);
-                })
-                .toList();
+            .map(r -> {
+                boolean liked = currentUser != null && reviewLikeRepository.existsByMemberAndReview(currentUser, r);
+                return PostReviewWithLikeResponse.fromEntity(r, liked);
+            })
+            .toList();
     }
 
     public PostReviewSimpleResponse createReview(Long id, UUID memberId, String content) {
@@ -113,10 +115,10 @@ public class PostReviewService {
 
         // 3. 리뷰 생성
         Review review = Review.builder()
-                .post(post)
-                .member(member)
-                .content(content)
-                .build();
+            .post(post)
+            .member(member)
+            .content(content)
+            .build();
 
         Review savedReview = postReviewRepository.save(review);
 
@@ -165,7 +167,7 @@ public class PostReviewService {
 
                 try {
                     reviewLikeRepository.save(
-                            ReviewLike.builder().review(review).member(member).build()
+                        ReviewLike.builder().review(review).member(member).build()
                     );
                     review.incrementLikeCount();
                     postReviewRepository.flush();
@@ -186,7 +188,6 @@ public class PostReviewService {
         }
     }
 
-
     public void cancelLikeReview(Long postId, Long reviewId, UUID memberId) {
         String lockKey = "review-like:" + reviewId;
         RLock lock = redissonClient.getLock(lockKey);
@@ -197,7 +198,7 @@ public class PostReviewService {
                 Member member = getMemberById(memberId);
 
                 ReviewLike like = reviewLikeRepository.findByMemberAndReview(member, review)
-                        .orElseThrow(() -> new BusinessException(RsCode.REVIEW_NOT_LIKED_YET));
+                    .orElseThrow(() -> new BusinessException(RsCode.REVIEW_NOT_LIKED_YET));
 
                 reviewLikeRepository.delete(like);
                 review.decrementLikeCount();
@@ -216,14 +217,13 @@ public class PostReviewService {
         }
     }
 
-
     /*
      예외처리 메서드
      게시글 ID로 조회 ,예외처리
      */
     private Post getPostById(Long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(() -> new BusinessException(RsCode.POST_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(RsCode.POST_NOT_FOUND));
     }
 
     /*
@@ -231,7 +231,7 @@ public class PostReviewService {
      */
     private Member getMemberById(UUID memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new BusinessException(RsCode.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(RsCode.MEMBER_NOT_FOUND));
     }
 
     /*
@@ -239,7 +239,7 @@ public class PostReviewService {
      */
     private Review getReviewByIdAndValidatePost(Long reviewId, Long postId) {
         Review review = postReviewRepository.findById(reviewId)
-                .orElseThrow(() -> new BusinessException(RsCode.REVIEW_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(RsCode.REVIEW_NOT_FOUND));
 
         if (!review.getPost().getId().equals(postId)) {
             throw new BusinessException(RsCode.REVIEW_NOT_FOUND);
@@ -247,6 +247,5 @@ public class PostReviewService {
 
         return review;
     }
-
 
 }

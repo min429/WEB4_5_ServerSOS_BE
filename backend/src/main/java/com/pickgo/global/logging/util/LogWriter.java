@@ -1,14 +1,16 @@
 package com.pickgo.global.logging.util;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
 import com.pickgo.domain.log.enums.ActionType;
 import com.pickgo.domain.member.member.entity.Member;
 import com.pickgo.domain.payment.entity.Payment;
 import com.pickgo.domain.reservation.entity.Reservation;
 import com.pickgo.global.logging.dto.LogContext;
 import com.pickgo.global.logging.service.HistorySaveService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -75,7 +77,7 @@ public class LogWriter {
     }
 
     public void writeExceptionLog(Exception e, ActionType action, LogContext logContext) {
-//        LogContext logContext = logContextUtil.extract();
+        //        LogContext logContext = logContextUtil.extract();
         historySaveService.saveExceptionLog(e, logContext, action);
     }
 
@@ -90,7 +92,7 @@ public class LogWriter {
 
     public void writeAccessLog(LogContext logContext) {
         try {
-//            LogContext logContext = logContextUtil.extract();
+            //            LogContext logContext = logContextUtil.extract();
             historySaveService.saveAccessHistory(logContext);
         } catch (Exception e) {
             System.out.println("접근 로그 저장 실패 : " + e.getMessage());

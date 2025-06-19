@@ -56,15 +56,15 @@ public class MemberController {
     public RsData<?> verifyEmailCode(@RequestParam String email, @RequestParam String code) {
         boolean verified = emailAuthService.verifyCode(email, code);
         return verified
-                ? RsData.from(SUCCESS)
-                : RsData.from(EMAIL_VERIFICATION_FAILED);
+            ? RsData.from(SUCCESS)
+            : RsData.from(EMAIL_VERIFICATION_FAILED);
     }
 
     @Operation(summary = "로그인")
     @PostMapping("/login")
     public RsData<LoginResponse> login(
-            @RequestBody LoginRequest request,
-            HttpServletResponse response
+        @RequestBody LoginRequest request,
+        HttpServletResponse response
     ) {
         return RsData.from(SUCCESS, memberService.login(request, response));
     }
@@ -72,8 +72,8 @@ public class MemberController {
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     public RsData<?> logout(
-            @AuthenticationPrincipal MemberPrincipal principal,
-            HttpServletResponse response
+        @AuthenticationPrincipal MemberPrincipal principal,
+        HttpServletResponse response
     ) {
         memberService.logout(response, principal.id());
         return RsData.from(SUCCESS);
@@ -82,8 +82,8 @@ public class MemberController {
     @Operation(summary = "회원탈퇴")
     @DeleteMapping("/me")
     public RsData<?> signout(
-            @AuthenticationPrincipal MemberPrincipal principal,
-            HttpServletResponse response
+        @AuthenticationPrincipal MemberPrincipal principal,
+        HttpServletResponse response
     ) {
         memberService.delete(principal.id(), response);
         return RsData.from(SUCCESS);
@@ -98,8 +98,8 @@ public class MemberController {
     @Operation(summary = "내 정보 수정")
     @PutMapping("/me")
     public RsData<MemberDetailResponse> updateMyInfo(
-            @AuthenticationPrincipal MemberPrincipal principal,
-            @RequestBody MemberUpdateRequest request
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @RequestBody MemberUpdateRequest request
     ) {
         return RsData.from(SUCCESS, memberService.updateMyInfo(principal.id(), request));
     }
@@ -107,8 +107,8 @@ public class MemberController {
     @Operation(summary = "비밀번호 변경")
     @PutMapping("/me/password")
     public RsData<?> updatePassword(
-            @AuthenticationPrincipal MemberPrincipal principal,
-            @RequestBody MemberPasswordUpdateRequest request
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @RequestBody MemberPasswordUpdateRequest request
     ) {
         memberService.updatePassword(principal.id(), request);
         return RsData.from(SUCCESS);
@@ -117,8 +117,8 @@ public class MemberController {
     @Operation(summary = "프로필 이미지 수정")
     @PutMapping(value = "/me/profile", consumes = "multipart/form-data")
     public RsData<String> updateProfileImage(
-            @AuthenticationPrincipal MemberPrincipal principal,
-            @RequestParam MultipartFile image
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @RequestParam MultipartFile image
     ) {
         String imageUrl = memberService.updateProfileImage(principal.id(), image);
         return RsData.from(SUCCESS, imageUrl);

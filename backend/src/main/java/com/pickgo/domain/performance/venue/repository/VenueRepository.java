@@ -1,9 +1,10 @@
 package com.pickgo.domain.performance.venue.repository;
 
-import com.pickgo.domain.performance.venue.entity.Venue;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.pickgo.domain.performance.venue.entity.Venue;
 
 public interface VenueRepository extends JpaRepository<Venue, Long> {
     Optional<Venue> findByNameAndAddress(String name, String address);

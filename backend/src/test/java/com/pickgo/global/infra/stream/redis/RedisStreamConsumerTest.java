@@ -1,6 +1,14 @@
 package com.pickgo.global.infra.stream.redis;
 
-import com.pickgo.global.config.thread.ExecutorConfig;
+import static com.pickgo.global.infra.stream.redis.RedisStreamConsumerTest.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.awaitility.Awaitility.*;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,14 +22,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.pickgo.global.infra.stream.redis.RedisStreamConsumerTest.TestStreamConsumer;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
+import com.pickgo.global.config.thread.ExecutorConfig;
 
 /**
  * RedisStreamConsumer 동작 검증
@@ -62,8 +63,8 @@ class RedisStreamConsumerTest {
         // given
         String streamKey = testStreamConsumer.getStreamKey();
         redisTemplate.opsForStream().add(streamKey, Map.of(
-                "type", "test",
-                "value", "ok"
+            "type", "test",
+            "value", "ok"
         ));
 
         // when
@@ -71,7 +72,7 @@ class RedisStreamConsumerTest {
 
         // then
         await().atMost(30, TimeUnit.SECONDS).untilAsserted(() ->
-                assertThat(testStreamConsumer.isHandled()).isTrue()
+            assertThat(testStreamConsumer.isHandled()).isTrue()
         );
     }
 
@@ -97,7 +98,7 @@ class RedisStreamConsumerTest {
         private final AtomicBoolean handled = new AtomicBoolean(false);
 
         protected TestStreamConsumer(StringRedisTemplate redisTemplate, ExecutorConfig executorConfig,
-                                     Environment environment) {
+            Environment environment) {
             super(redisTemplate, environment);
             this.executorConfig = executorConfig;
         }

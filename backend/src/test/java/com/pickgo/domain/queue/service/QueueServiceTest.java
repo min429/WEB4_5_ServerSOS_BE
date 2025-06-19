@@ -25,25 +25,20 @@ import com.pickgo.global.init.ServerIdProvider;
 @Import({QueueService.class, RedisQueueRepository.class})
 class QueueServiceTest {
 
-    @Autowired
-    private QueueService queueService;
-
-    @MockitoBean
-    private TokenService tokenService;
-
-    @MockitoBean
-    private RedisStreamPublisher redisStreamPublisher;
-
-    @MockitoBean
-    private ServerIdProvider serverIdProvider;
-
-    @MockitoBean
-    private ServerRegistry serverRegistry;
-
     private final Long performanceSessionId = 1L;
     private final String connectionId = "conn-1";
     private final String serverId = "server-1";
     private final String streamKey = "queue_stream:server_id:" + serverId;
+    @Autowired
+    private QueueService queueService;
+    @MockitoBean
+    private TokenService tokenService;
+    @MockitoBean
+    private RedisStreamPublisher redisStreamPublisher;
+    @MockitoBean
+    private ServerIdProvider serverIdProvider;
+    @MockitoBean
+    private ServerRegistry serverRegistry;
 
     @BeforeEach
     void setUp() {

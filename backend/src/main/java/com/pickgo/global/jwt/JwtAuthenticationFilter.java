@@ -30,31 +30,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-
     /**
      * 스프링 시큐리티 필터에서 인증 처리
      **/
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         // 인증하지 않고 통과시킬 경로 설정
         if (request.getRequestURI().equals("/api/tokens")
-                || request.getRequestURI().equals("/api/members")
-                || request.getRequestURI().equals("/api/members/login")
-                || request.getRequestURI().equals("/api/oauth/kakao/login")
-                || request.getRequestURI().equals("/api/oauth/kakao/login/redirect")
-                || request.getRequestURI().startsWith("/api/members/email")
-                || request.getRequestURI().startsWith("/api/oauth")
-                || request.getRequestURI().startsWith("/swagger-ui")
-                || request.getRequestURI().startsWith("/v3/api-docs")
-                || (request.getRequestURI().startsWith("/api/posts") && "GET".equals(request.getMethod()))
-                || request.getRequestURI().startsWith("/admin/monitoring")
-                || request.getRequestURI().equals("/favicon.ico")
-                || request.getRequestURI().startsWith("/admin/monitoring/health")
-                || request.getRequestURI().startsWith("/actuator")
+            || request.getRequestURI().equals("/api/members")
+            || request.getRequestURI().equals("/api/members/login")
+            || request.getRequestURI().equals("/api/oauth/kakao/login")
+            || request.getRequestURI().equals("/api/oauth/kakao/login/redirect")
+            || request.getRequestURI().startsWith("/api/members/email")
+            || request.getRequestURI().startsWith("/api/oauth")
+            || request.getRequestURI().startsWith("/swagger-ui")
+            || request.getRequestURI().startsWith("/v3/api-docs")
+            || (request.getRequestURI().startsWith("/api/posts") && "GET".equals(request.getMethod()))
+            || request.getRequestURI().startsWith("/admin/monitoring")
+            || request.getRequestURI().equals("/favicon.ico")
+            || request.getRequestURI().startsWith("/admin/monitoring/health")
+            || request.getRequestURI().startsWith("/actuator")
         ) {
             filterChain.doFilter(request, response);
             return;

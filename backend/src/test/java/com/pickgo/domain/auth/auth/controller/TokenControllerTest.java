@@ -29,71 +29,63 @@ import com.pickgo.global.token.TestToken;
 
 import jakarta.servlet.http.Cookie;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class TokenControllerTest {
 
-	@Autowired
-	private MockMvc mockMvc;
+    // 회원가입된 기존 유저
+    private final String testEmail = "test@example.com";
+    private final String testPassword = "test_password";
+    private final String testNickname = "test_user";
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private JwtProvider jwtProvider;
+    @Autowired
+    private HistorySaveService historySaveService;
+    @Autowired
+    private MemberHistoryRepository memberHistoryRepository;
+    @Autowired
+    private RedisRefreshTokenRepository redisRefreshTokenRepository;
+    @Autowired
+    private TestToken token;
 
-	@Autowired
-	private MemberRepository memberRepository;
+    private Member getTestMember() {
+        return Member.builder()
+            .id(jwtProvider.getUserId(token.userToken))
+            .email(testEmail)
+            .password(testPassword)
+            .nickname(testNickname)
+            .authority(Authority.USER)
+            .socialProvider(SocialProvider.NONE)
+            .build();
+    }
 
-	@Autowired
-	private JwtProvider jwtProvider;
+    @BeforeEach
+    void setUp() {
+        Member member = getTestMember();
+        memberRepository.save(member);
+    }
 
-	@Autowired
-	private HistorySaveService historySaveService;
+    @AfterEach
+    void tearDown() {
+        memberRepository.deleteAll();
+    }
 
-	@Autowired
-	private MemberHistoryRepository memberHistoryRepository;
+    @Test
+    @DisplayName("refreshToken 쿠키로 accessToken 발급 성공")
+    void createToken_성공() throws Exception {
+        Member member = getTestMember();
+        redisRefreshTokenRepository.save(member.getId(), token.userToken, Duration.ofMinutes(86400));
 
-	@Autowired
-	private RedisRefreshTokenRepository redisRefreshTokenRepository;
-
-	@Autowired
-	private TestToken token;
-
-	// 회원가입된 기존 유저
-	private final String testEmail = "test@example.com";
-	private final String testPassword = "test_password";
-	private final String testNickname = "test_user";
-
-	private Member getTestMember() {
-		return Member.builder()
-			.id(jwtProvider.getUserId(token.userToken))
-			.email(testEmail)
-			.password(testPassword)
-			.nickname(testNickname)
-			.authority(Authority.USER)
-			.socialProvider(SocialProvider.NONE)
-			.build();
-	}
-
-	@BeforeEach
-	void setUp() {
-		Member member = getTestMember();
-		memberRepository.save(member);
-	}
-
-	@AfterEach
-	void tearDown() {
-		memberRepository.deleteAll();
-	}
-
-	@Test
-	@DisplayName("refreshToken 쿠키로 accessToken 발급 성공")
-	void createToken_성공() throws Exception {
-		Member member = getTestMember();
-		redisRefreshTokenRepository.save(member.getId(), token.userToken, Duration.ofMinutes(86400));
-
-		mockMvc.perform(post("/api/tokens")
-				.cookie(new Cookie("refreshToken", token.userToken))
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.code").value(CREATED.getCode()))
-			.andExpect(jsonPath("$.data.accessToken").exists());
-	}
+        mockMvc.perform(post("/api/tokens")
+                .cookie(new Cookie("refreshToken", token.userToken))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.code").value(CREATED.getCode()))
+            .andExpect(jsonPath("$.data.accessToken").exists());
+    }
 }

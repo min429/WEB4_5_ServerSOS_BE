@@ -1,7 +1,6 @@
 package com.pickgo.domain.payment.controller;
 
 import static com.pickgo.global.response.RsCode.*;
-import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,9 +27,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pickgo.domain.log.entity.PaymentHistory;
-import com.pickgo.domain.log.enums.ActionType;
-import com.pickgo.domain.log.enums.ActorType;
 import com.pickgo.domain.log.repository.PaymentHistoryRepository;
 import com.pickgo.domain.member.member.entity.Member;
 import com.pickgo.domain.member.member.entity.enums.Authority;
@@ -107,28 +103,28 @@ public class PaymentControllerTest {
         testMemberId = UUID.randomUUID();
 
         Member member = Member.builder()
-                .id(testMemberId)
-                .email(testEmail)
-                .password(passwordEncoder.encode(testPassword))
-                .nickname(testNickname)
-                .authority(Authority.USER)
-                .socialProvider(SocialProvider.NONE)
-                .build();
+            .id(testMemberId)
+            .email(testEmail)
+            .password(passwordEncoder.encode(testPassword))
+            .nickname(testNickname)
+            .authority(Authority.USER)
+            .socialProvider(SocialProvider.NONE)
+            .build();
         memberRepository.save(member);
 
         // 로그인 요청 (실제 로그인 API)
         String loginPayload = """
-                {
-                  "email": "%s",
-                  "password": "%s"
-                }
-                """.formatted(testEmail, testPassword);
+            {
+              "email": "%s",
+              "password": "%s"
+            }
+            """.formatted(testEmail, testPassword);
 
         MvcResult result = mockMvc.perform(post("/api/members/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(loginPayload))
-                .andExpect(status().isOk())
-                .andReturn();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(loginPayload))
+            .andExpect(status().isOk())
+            .andReturn();
 
         // accessToken 추출
         String responseJson = result.getResponse().getContentAsString();
@@ -136,30 +132,30 @@ public class PaymentControllerTest {
         userToken = jsonNode.get("data").get("accessToken").asText();
 
         Venue venue = venueRepository.save(Venue.builder()
-                .name("테스트 공연장")
-                .address("서울시 테스트구")
-                .build()
+            .name("테스트 공연장")
+            .address("서울시 테스트구")
+            .build()
         );
 
         Performance performance = performanceRepository.save(Performance.builder()
-                .name("테스트 공연")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now().plusDays(1))
-                .runtime("120분")
-                .poster("test.jpg")
-                .state(PerformanceState.SCHEDULED)
-                .minAge("전체관람가")
-                .casts("홍길동 외")
-                .type(PerformanceType.MUSICAL)
-                .venue(venue)
-                .build()
+            .name("테스트 공연")
+            .startDate(LocalDate.now())
+            .endDate(LocalDate.now().plusDays(1))
+            .runtime("120분")
+            .poster("test.jpg")
+            .state(PerformanceState.SCHEDULED)
+            .minAge("전체관람가")
+            .casts("홍길동 외")
+            .type(PerformanceType.MUSICAL)
+            .venue(venue)
+            .build()
         );
 
         performanceSession = performanceSessionRepository.save(PerformanceSession.builder()
-                .performance(performance)
-                .performanceTime(LocalDateTime.now().plusDays(1))
-                .reserveOpenAt(LocalDateTime.now().minusDays(14))
-                .build()
+            .performance(performance)
+            .performanceTime(LocalDateTime.now().plusDays(1))
+            .reserveOpenAt(LocalDateTime.now().minusDays(14))
+            .build()
         );
 
     }
@@ -179,35 +175,36 @@ public class PaymentControllerTest {
         Member member = memberRepository.findByEmail(testEmail).orElseThrow();
 
         Reservation reservation = reservationRepository.save(Reservation.builder()
-                .member(member)
-                .performanceSession(performanceSession)
-                .totalPrice(10000)
-                .status(ReservationStatus.RESERVED)
-                .build()
+            .member(member)
+            .performanceSession(performanceSession)
+            .totalPrice(10000)
+            .status(ReservationStatus.RESERVED)
+            .build()
         );
 
         PaymentCreateRequest request = new PaymentCreateRequest(
-                reservation.getTotalPrice(),
-                reservation.getId()
+            reservation.getTotalPrice(),
+            reservation.getId()
         );
 
         mockMvc.perform(post("/api/payments")
-                        .header("Authorization", "Bearer " + userToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.code").value(CREATED.getCode()))
-                .andExpect(jsonPath("$.data.amount").value(reservation.getTotalPrice()))
-                .andExpect(jsonPath("$.data.orderId").isNotEmpty())
-                .andExpect(jsonPath("$.data.reservationId").value(reservation.getId()))
-                .andExpect(jsonPath("$.data.performanceName").value(performanceSession.getPerformance().getName()))
-                .andExpect(jsonPath("$.data.paymentStatus").value(PaymentStatus.PENDING.toString()))
-                .andExpect(jsonPath("$.data.createdAt").value(Matchers.matchesPattern("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*")))
-                .andDo(print());
+                .header("Authorization", "Bearer " + userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.code").value(CREATED.getCode()))
+            .andExpect(jsonPath("$.data.amount").value(reservation.getTotalPrice()))
+            .andExpect(jsonPath("$.data.orderId").isNotEmpty())
+            .andExpect(jsonPath("$.data.reservationId").value(reservation.getId()))
+            .andExpect(jsonPath("$.data.performanceName").value(performanceSession.getPerformance().getName()))
+            .andExpect(jsonPath("$.data.paymentStatus").value(PaymentStatus.PENDING.toString()))
+            .andExpect(jsonPath("$.data.createdAt").value(
+                Matchers.matchesPattern("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*")))
+            .andDo(print());
 
-//        PaymentHistory history = paymentHistoryRepository.findAll().get(0);
-//        assertThat(history.getAction()).isEqualTo(ActionType.PAYMENT_CREATED);
-//        assertThat(history.getActorType()).isEqualTo(ActorType.USER);
+        //        PaymentHistory history = paymentHistoryRepository.findAll().get(0);
+        //        assertThat(history.getAction()).isEqualTo(ActionType.PAYMENT_CREATED);
+        //        assertThat(history.getActorType()).isEqualTo(ActorType.USER);
     }
 
     @Test
@@ -217,47 +214,46 @@ public class PaymentControllerTest {
         Member member = memberRepository.findByEmail(testEmail).orElseThrow();
 
         Reservation reservation1 = reservationRepository.save(Reservation.builder()
-                .member(member)
-                .performanceSession(performanceSession)
-                .totalPrice(20000)
-                .status(ReservationStatus.RESERVED)
-                .build());
+            .member(member)
+            .performanceSession(performanceSession)
+            .totalPrice(20000)
+            .status(ReservationStatus.RESERVED)
+            .build());
 
         Payment payment1 = paymentRepository.save(Payment.builder()
-                .reservation(reservation1)
-                .amount(reservation1.getTotalPrice())
-                .orderId(UUID.randomUUID().toString())
-                .status(PaymentStatus.PENDING)
-                .build());
+            .reservation(reservation1)
+            .amount(reservation1.getTotalPrice())
+            .orderId(UUID.randomUUID().toString())
+            .status(PaymentStatus.PENDING)
+            .build());
 
         Reservation reservation2 = reservationRepository.save(Reservation.builder()
-                .member(member)
-                .performanceSession(performanceSession)
-                .totalPrice(30000)
-                .status(ReservationStatus.RESERVED)
-                .build());
+            .member(member)
+            .performanceSession(performanceSession)
+            .totalPrice(30000)
+            .status(ReservationStatus.RESERVED)
+            .build());
 
         Payment payment2 = paymentRepository.save(Payment.builder()
-                .reservation(reservation2)
-                .amount(reservation2.getTotalPrice())
-                .orderId(UUID.randomUUID().toString())
-                .status(PaymentStatus.PENDING)
-                .build());
-
+            .reservation(reservation2)
+            .amount(reservation2.getTotalPrice())
+            .orderId(UUID.randomUUID().toString())
+            .status(PaymentStatus.PENDING)
+            .build());
 
         mockMvc.perform(get("/api/payments/me")
-                        .header("Authorization", "Bearer " + userToken)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(SUCCESS.getCode()))
-                .andExpect(jsonPath("$.data.items").isArray())
-                .andExpect(jsonPath("$.data.items[0].amount").value(payment1.getAmount()))
-                .andExpect(jsonPath("$.data.items[1].amount").value(payment2.getAmount()))
-                .andExpect(jsonPath("$.data.items[0].performanceName").value(performanceSession.getPerformance().getName()))
-                .andExpect(jsonPath("$.data.items[1].performanceName").value(performanceSession.getPerformance().getName()))
-                .andExpect(jsonPath("$.data.items[0].paymentStatus").value(payment1.getStatus().toString()))
-                .andExpect(jsonPath("$.data.items[1].paymentStatus").value(payment2.getStatus().toString()))
-                .andDo(print());
+                .header("Authorization", "Bearer " + userToken)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(SUCCESS.getCode()))
+            .andExpect(jsonPath("$.data.items").isArray())
+            .andExpect(jsonPath("$.data.items[0].amount").value(payment1.getAmount()))
+            .andExpect(jsonPath("$.data.items[1].amount").value(payment2.getAmount()))
+            .andExpect(jsonPath("$.data.items[0].performanceName").value(performanceSession.getPerformance().getName()))
+            .andExpect(jsonPath("$.data.items[1].performanceName").value(performanceSession.getPerformance().getName()))
+            .andExpect(jsonPath("$.data.items[0].paymentStatus").value(payment1.getStatus().toString()))
+            .andExpect(jsonPath("$.data.items[1].paymentStatus").value(payment2.getStatus().toString()))
+            .andDo(print());
     }
 
     @Test
@@ -267,30 +263,31 @@ public class PaymentControllerTest {
         Member member = memberRepository.findById(testMemberId).orElseThrow();
 
         Reservation reservation = reservationRepository.save(Reservation.builder()
-                .member(member)
-                .performanceSession(performanceSession)
-                .totalPrice(15000)
-                .status(ReservationStatus.RESERVED)
-                .build());
+            .member(member)
+            .performanceSession(performanceSession)
+            .totalPrice(15000)
+            .status(ReservationStatus.RESERVED)
+            .build());
 
         Payment payment = paymentRepository.save(Payment.builder()
-                .reservation(reservation)
-                .amount(reservation.getTotalPrice())
-                .orderId(UUID.randomUUID().toString())
-                .status(PaymentStatus.PENDING)
-                .build());
+            .reservation(reservation)
+            .amount(reservation.getTotalPrice())
+            .orderId(UUID.randomUUID().toString())
+            .status(PaymentStatus.PENDING)
+            .build());
 
         mockMvc.perform(get("/api/payments/" + payment.getId())
-                        .header("Authorization", "Bearer " + userToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(SUCCESS.getCode()))
-                .andExpect(jsonPath("$.data.amount").value(reservation.getTotalPrice()))
-                .andExpect(jsonPath("$.data.orderId").isNotEmpty())
-                .andExpect(jsonPath("$.data.reservationId").value(reservation.getId()))
-                .andExpect(jsonPath("$.data.performanceName").value(performanceSession.getPerformance().getName()))
-                .andExpect(jsonPath("$.data.paymentStatus").value(PaymentStatus.PENDING.toString()))
-                .andExpect(jsonPath("$.data.createdAt").value(Matchers.matchesPattern("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*")))
-                .andDo(print());
+                .header("Authorization", "Bearer " + userToken))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(SUCCESS.getCode()))
+            .andExpect(jsonPath("$.data.amount").value(reservation.getTotalPrice()))
+            .andExpect(jsonPath("$.data.orderId").isNotEmpty())
+            .andExpect(jsonPath("$.data.reservationId").value(reservation.getId()))
+            .andExpect(jsonPath("$.data.performanceName").value(performanceSession.getPerformance().getName()))
+            .andExpect(jsonPath("$.data.paymentStatus").value(PaymentStatus.PENDING.toString()))
+            .andExpect(jsonPath("$.data.createdAt").value(
+                Matchers.matchesPattern("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*")))
+            .andDo(print());
     }
 
     /*
@@ -299,62 +296,62 @@ public class PaymentControllerTest {
      * 아래 코드는 주석 처리함.
      */
 
-//    @Test
-//    @DisplayName("결제 승인 성공")
-//    void confirmPayment() throws Exception {
-//        Member member = memberRepository.findById(testMemberId).orElseThrow();
-//
-//        Reservation reservation = reservationRepository.save(Reservation.builder()
-//                .member(member)
-//                .performanceSession(performanceSession)
-//                .totalPrice(20000)
-//                .status(ReservationStatus.RESERVED)
-//                .build());
-//
-//        Payment payment = paymentRepository.save(Payment.builder()
-//                .reservation(reservation)
-//                .amount(reservation.getTotalPrice())
-//                .orderId(UUID.randomUUID().toString())
-//                .status(PaymentStatus.PENDING)
-//                .build());
-//
-//        PaymentConfirmRequest request = new PaymentConfirmRequest(
-//                "dummyPaymentKey",
-//                payment.getOrderId(),
-//                payment.getAmount()
-//        );
-//
-//        mockMvc.perform(post("/api/payments/" + payment.getId() + "/confirm")
-//                        .header("Authorization", "Bearer " + userToken)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.code").value(SUCCESS.getCode()));
-//    }
-//
-//    @Test
-//    @DisplayName("결제 취소 성공")
-//    void cancelPayment() throws Exception {
-//        Member member = memberRepository.findById(testMemberId).orElseThrow();
-//
-//        Reservation reservation = reservationRepository.save(Reservation.builder()
-//                .member(member)
-//                .performanceSession(performanceSession)
-//                .totalPrice(13000)
-//                .status(ReservationStatus.RESERVED)
-//                .build());
-//
-//        Payment payment = paymentRepository.save(Payment.builder()
-//                .reservation(reservation)
-//                .amount(reservation.getTotalPrice())
-//                .orderId(UUID.randomUUID().toString())
-//                .status(PaymentStatus.COMPLETED) // 테스트를 위해 승인 상태로 생성
-//                .build());
-//
-//        mockMvc.perform(post("/api/payments/" + payment.getId() + "/cancel")
-//                        .header("Authorization", "Bearer " + userToken))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.code").value(SUCCESS.getCode()))
-//                .andExpect(jsonPath("$.data.paymentStatus").value(PaymentStatus.CANCELED.toString()));
-//    }
+    //    @Test
+    //    @DisplayName("결제 승인 성공")
+    //    void confirmPayment() throws Exception {
+    //        Member member = memberRepository.findById(testMemberId).orElseThrow();
+    //
+    //        Reservation reservation = reservationRepository.save(Reservation.builder()
+    //                .member(member)
+    //                .performanceSession(performanceSession)
+    //                .totalPrice(20000)
+    //                .status(ReservationStatus.RESERVED)
+    //                .build());
+    //
+    //        Payment payment = paymentRepository.save(Payment.builder()
+    //                .reservation(reservation)
+    //                .amount(reservation.getTotalPrice())
+    //                .orderId(UUID.randomUUID().toString())
+    //                .status(PaymentStatus.PENDING)
+    //                .build());
+    //
+    //        PaymentConfirmRequest request = new PaymentConfirmRequest(
+    //                "dummyPaymentKey",
+    //                payment.getOrderId(),
+    //                payment.getAmount()
+    //        );
+    //
+    //        mockMvc.perform(post("/api/payments/" + payment.getId() + "/confirm")
+    //                        .header("Authorization", "Bearer " + userToken)
+    //                        .contentType(MediaType.APPLICATION_JSON)
+    //                        .content(objectMapper.writeValueAsString(request)))
+    //                .andExpect(status().isOk())
+    //                .andExpect(jsonPath("$.code").value(SUCCESS.getCode()));
+    //    }
+    //
+    //    @Test
+    //    @DisplayName("결제 취소 성공")
+    //    void cancelPayment() throws Exception {
+    //        Member member = memberRepository.findById(testMemberId).orElseThrow();
+    //
+    //        Reservation reservation = reservationRepository.save(Reservation.builder()
+    //                .member(member)
+    //                .performanceSession(performanceSession)
+    //                .totalPrice(13000)
+    //                .status(ReservationStatus.RESERVED)
+    //                .build());
+    //
+    //        Payment payment = paymentRepository.save(Payment.builder()
+    //                .reservation(reservation)
+    //                .amount(reservation.getTotalPrice())
+    //                .orderId(UUID.randomUUID().toString())
+    //                .status(PaymentStatus.COMPLETED) // 테스트를 위해 승인 상태로 생성
+    //                .build());
+    //
+    //        mockMvc.perform(post("/api/payments/" + payment.getId() + "/cancel")
+    //                        .header("Authorization", "Bearer " + userToken))
+    //                .andExpect(status().isOk())
+    //                .andExpect(jsonPath("$.code").value(SUCCESS.getCode()))
+    //                .andExpect(jsonPath("$.data.paymentStatus").value(PaymentStatus.CANCELED.toString()));
+    //    }
 }

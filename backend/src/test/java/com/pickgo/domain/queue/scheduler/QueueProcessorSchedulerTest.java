@@ -19,27 +19,20 @@ import com.pickgo.domain.queue.policy.EntryCountDecider;
 import com.pickgo.domain.queue.service.QueueService;
 import com.pickgo.global.config.thread.ExecutorConfig;
 
-
-
 @ExtendWith(MockitoExtension.class)
 class QueueProcessorSchedulerTest {
 
-    @Mock
-    private QueueService queueService;
-
-    @Mock
-    private ExecutorConfig executorConfig;
-
-    @Mock
-    private EntryCountDecider entryCountDecider;
-
-    @InjectMocks
-    private QueueProcessorScheduler scheduler;
-
     private final Long performanceSessionId = 1L;
     private final String connectionId = "conn-1";
-
     private final ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
+    @Mock
+    private QueueService queueService;
+    @Mock
+    private ExecutorConfig executorConfig;
+    @Mock
+    private EntryCountDecider entryCountDecider;
+    @InjectMocks
+    private QueueProcessorScheduler scheduler;
 
     private static ThreadPoolTaskExecutor getThreadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -48,7 +41,7 @@ class QueueProcessorSchedulerTest {
         executor.setQueueCapacity(0);
         executor.setThreadNamePrefix("async-task-");
         executor.setRejectedExecutionHandler(
-                new ThreadPoolExecutor.CallerRunsPolicy());
+            new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
         return executor;
     }
@@ -64,7 +57,7 @@ class QueueProcessorSchedulerTest {
         scheduler.process();
 
         await().atMost(30, TimeUnit.SECONDS).untilAsserted(() ->
-                verify(queueService, never()).enterEntryLine(any(), any())
+            verify(queueService, never()).enterEntryLine(any(), any())
         );
     }
 
@@ -81,12 +74,12 @@ class QueueProcessorSchedulerTest {
         scheduler.process();
 
         await().atMost(30, TimeUnit.SECONDS).untilAsserted(() ->
-                verify(queueService).enterEntryLine(performanceSessionId, connectionId)
+            verify(queueService).enterEntryLine(performanceSessionId, connectionId)
         );
 
         await().atMost(30, TimeUnit.SECONDS).untilAsserted(() ->
-                verify(queueService).publishWaitingState(eq(performanceSessionId), eq(connectionId),
-                        any(WaitingState.class))
+            verify(queueService).publishWaitingState(eq(performanceSessionId), eq(connectionId),
+                any(WaitingState.class))
         );
     }
 
@@ -103,8 +96,8 @@ class QueueProcessorSchedulerTest {
         scheduler.process();
 
         await().atMost(30, TimeUnit.SECONDS).untilAsserted(() ->
-                verify(queueService).publishWaitingState(eq(performanceSessionId), eq(connectionId),
-                        any(WaitingState.class))
+            verify(queueService).publishWaitingState(eq(performanceSessionId), eq(connectionId),
+                any(WaitingState.class))
         );
     }
 }

@@ -33,13 +33,13 @@ import lombok.Setter;
 @Getter
 @Builder
 @Table(
-        name = "reserved_seat",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uq_reserved_seat_session_area_row_number",
-                        columnNames = {"performance_session_id", "performance_area_id", "seat_row", "number"}
-                )
-        }
+    name = "reserved_seat",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uq_reserved_seat_session_area_row_number",
+            columnNames = {"performance_session_id", "performance_area_id", "seat_row", "number"}
+        )
+    }
 )
 public class ReservedSeat extends BaseEntity {
     @Id

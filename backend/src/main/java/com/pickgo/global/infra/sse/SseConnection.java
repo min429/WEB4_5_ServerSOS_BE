@@ -12,8 +12,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 public abstract class SseConnection {
-    @Setter
-    private SseEmitter emitter;
     private final String connectionId;
     private final String serverId;
+    @Setter
+    private SseEmitter emitter;
 }

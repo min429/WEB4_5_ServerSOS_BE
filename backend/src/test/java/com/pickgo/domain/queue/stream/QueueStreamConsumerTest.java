@@ -24,20 +24,16 @@ import com.pickgo.global.init.ServerIdProvider;
 @Import({QueueStreamConsumer.class, ExecutorConfig.class, ServerIdProvider.class})
 class QueueStreamConsumerTest {
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
-    @MockitoBean
-    private SseHandler sseHandler;
-
-    @MockitoBean
-    private TokenService tokenService;
-
-    @Autowired
-    private QueueStreamConsumer queueStreamConsumer;
-
     private final String connectionId = "conn-1";
     private final String entryToken = "entryToken";
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    @MockitoBean
+    private SseHandler sseHandler;
+    @MockitoBean
+    private TokenService tokenService;
+    @Autowired
+    private QueueStreamConsumer queueStreamConsumer;
     private String streamKey;
     private String consumerGroup;
     private String consumerName;
@@ -114,8 +110,8 @@ class QueueStreamConsumerTest {
     void 잘못된타입의_메시지는_예외를_발생시키지않고_건너뛴다() {
         // given
         redisTemplate.opsForStream().add(streamKey, Map.of(
-                "type", "invalid",
-                "connection_id", connectionId
+            "type", "invalid",
+            "connection_id", connectionId
         ));
 
         // when

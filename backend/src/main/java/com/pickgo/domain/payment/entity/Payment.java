@@ -33,7 +33,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @Table(indexes = {
-        @Index(name = "idx_payment_order_id", columnList = "orderId")
+    @Index(name = "idx_payment_order_id", columnList = "orderId")
 })
 public class Payment extends BaseEntity {
     @Id

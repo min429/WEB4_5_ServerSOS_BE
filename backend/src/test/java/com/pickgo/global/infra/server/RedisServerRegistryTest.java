@@ -21,14 +21,12 @@ import com.pickgo.global.infra.server.redis.RedisServerRegistry;
 @Import({RedisServerRegistry.class})
 class RedisServerRegistryTest {
 
-    @Autowired
-    private RedisServerRegistry serverRegistry;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
     private final String connectionId = "conn-1";
     private final String serverId = "server-1";
+    @Autowired
+    private RedisServerRegistry serverRegistry;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @AfterEach
     void tearDown() {
@@ -51,8 +49,8 @@ class RedisServerRegistryTest {
     @Test
     void 서버_식별자_조회시_없으면_예외를_던진다() {
         assertThatThrownBy(() -> serverRegistry.getServerId(connectionId))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining(connectionId);
+            .isInstanceOf(NoSuchElementException.class)
+            .hasMessageContaining(connectionId);
     }
 
     @Test
@@ -65,7 +63,7 @@ class RedisServerRegistryTest {
 
         // then
         assertThatThrownBy(() -> serverRegistry.getServerId(connectionId))
-                .isInstanceOf(NoSuchElementException.class);
+            .isInstanceOf(NoSuchElementException.class);
     }
 
     @Test

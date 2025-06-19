@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -26,7 +27,7 @@ public class S3Config {
     @Bean
     public S3Client s3Client() {
         S3ClientBuilder builder = S3Client.builder()
-                .region(Region.of(region));
+            .region(Region.of(region));
 
         // 개발 환경 시 credential 세팅
         if (!accessKey.isEmpty() && !secretKey.isEmpty()) {

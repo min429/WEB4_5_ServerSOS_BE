@@ -33,8 +33,8 @@ public class EntryAuthenticationFilter extends OncePerRequestFilter {
 
         // 인증할 경로 설정
         if (!(request.getRequestURI().equals("/api/areas") && "GET".equals(request.getMethod())
-                || request.getRequestURI().equals("/api/areas/subscribe")
-                || (request.getRequestURI().equals("/api/reservations") && "POST".equals(request.getMethod()))
+            || request.getRequestURI().equals("/api/areas/subscribe")
+            || (request.getRequestURI().equals("/api/reservations") && "POST".equals(request.getMethod()))
         )) {
             filterChain.doFilter(request, response);
             return;

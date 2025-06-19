@@ -1,26 +1,28 @@
 package com.pickgo.domain.performance.performance.service;
 
-import com.pickgo.domain.performance.kopis.dto.KopisPerformanceDetailResponse;
-import com.pickgo.domain.performance.kopis.dto.KopisVenueDetailResponse;
-import com.pickgo.domain.performance.kopis.service.KopisService;
-import com.pickgo.domain.performance.performance.entity.Performance;
-import com.pickgo.domain.performance.performance.repository.PerformanceRepository;
-import com.pickgo.domain.performance.performance.util.PerformanceMapper;
-import com.pickgo.domain.post.post.service.PostService;
-import com.pickgo.domain.performance.venue.entity.Venue;
-import com.pickgo.domain.performance.venue.repository.VenueRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.pickgo.domain.performance.kopis.dto.KopisPerformanceDetailResponse;
+import com.pickgo.domain.performance.kopis.dto.KopisVenueDetailResponse;
+import com.pickgo.domain.performance.kopis.service.KopisService;
+import com.pickgo.domain.performance.performance.entity.Performance;
+import com.pickgo.domain.performance.performance.repository.PerformanceRepository;
+import com.pickgo.domain.performance.performance.util.PerformanceMapper;
+import com.pickgo.domain.performance.venue.entity.Venue;
+import com.pickgo.domain.performance.venue.repository.VenueRepository;
+import com.pickgo.domain.post.post.service.PostService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -68,26 +70,28 @@ public class PerformanceService {
             return;
 
         // 2. 공연 중복 체크
-        if (performanceRepository.existsByNameAndPoster(performanceDetailResponse.getName(), performanceDetailResponse.getPoster())) {
+        if (performanceRepository.existsByNameAndPoster(performanceDetailResponse.getName(),
+            performanceDetailResponse.getPoster())) {
             return;
         }
 
         Venue venue;
         try {
             // 3. 공연 시설 상세 조회
-            KopisVenueDetailResponse venueDetail = kopisService.fetchVenueDetail(performanceDetailResponse.getVenueId());
+            KopisVenueDetailResponse venueDetail = kopisService.fetchVenueDetail(
+                performanceDetailResponse.getVenueId());
 
             // 4. save 시도 → 실패 시 다시 조회
             try {
                 venue = venueRepository.save(
-                        Venue.builder()
-                                .name(venueDetail.name())
-                                .address(venueDetail.address())
-                                .build()
+                    Venue.builder()
+                        .name(venueDetail.name())
+                        .address(venueDetail.address())
+                        .build()
                 );
             } catch (DataIntegrityViolationException e) {
                 venue = venueRepository.findByNameAndAddress(venueDetail.name(), venueDetail.address())
-                        .orElseThrow(() -> new IllegalStateException("중복 venue 저장 중 오류, 재조회 실패"));
+                    .orElseThrow(() -> new IllegalStateException("중복 venue 저장 중 오류, 재조회 실패"));
             }
 
         } catch (Exception e) {

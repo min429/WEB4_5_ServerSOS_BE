@@ -1,15 +1,13 @@
 package com.pickgo.domain.post.post.service;
 
-import com.pickgo.domain.performance.performance.entity.Performance;
-import com.pickgo.domain.performance.performance.entity.PerformanceState;
-import com.pickgo.domain.performance.performance.entity.PerformanceType;
-import com.pickgo.domain.post.post.dto.PostDetailResponse;
-import com.pickgo.domain.post.post.dto.PostSimpleResponse;
-import com.pickgo.domain.post.post.entity.Post;
-import com.pickgo.domain.post.post.entity.PostSortType;
-import com.pickgo.domain.post.post.repository.PostRepository;
-import com.pickgo.domain.performance.venue.entity.Venue;
-import com.pickgo.global.response.PageResponse;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,13 +21,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import com.pickgo.domain.performance.performance.entity.Performance;
+import com.pickgo.domain.performance.performance.entity.PerformanceState;
+import com.pickgo.domain.performance.performance.entity.PerformanceType;
+import com.pickgo.domain.performance.venue.entity.Venue;
+import com.pickgo.domain.post.post.dto.PostDetailResponse;
+import com.pickgo.domain.post.post.dto.PostSimpleResponse;
+import com.pickgo.domain.post.post.entity.Post;
+import com.pickgo.domain.post.post.entity.PostSortType;
+import com.pickgo.domain.post.post.repository.PostRepository;
+import com.pickgo.global.response.PageResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class PostServiceTest {
@@ -47,23 +48,23 @@ public class PostServiceTest {
 
     private Post createPost() {
         Performance performance = Performance.builder()
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now().plusDays(10))
-                .poster("poster.jpg")
-                .state(PerformanceState.SCHEDULED)
-                .type(PerformanceType.MUSICAL)
-                .venue(Venue.builder().build())
-                .performanceIntros(List.of())
-                .performanceAreas(List.of())
-                .performanceSessions(List.of())
-                .build();
+            .startDate(LocalDate.now())
+            .endDate(LocalDate.now().plusDays(10))
+            .poster("poster.jpg")
+            .state(PerformanceState.SCHEDULED)
+            .type(PerformanceType.MUSICAL)
+            .venue(Venue.builder().build())
+            .performanceIntros(List.of())
+            .performanceAreas(List.of())
+            .performanceSessions(List.of())
+            .build();
 
         return Post.builder()
-                .id(1L)
-                .title("테스트 공연")
-                .views(100L)
-                .performance(performance)
-                .build();
+            .id(1L)
+            .title("테스트 공연")
+            .views(100L)
+            .performance(performance)
+            .build();
     }
 
     @Test

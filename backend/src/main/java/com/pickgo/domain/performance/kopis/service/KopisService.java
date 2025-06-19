@@ -1,8 +1,10 @@
 package com.pickgo.domain.performance.kopis.service;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.pickgo.domain.performance.kopis.dto.*;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -11,10 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.pickgo.domain.performance.kopis.dto.KopisPerformanceDetailResponse;
+import com.pickgo.domain.performance.kopis.dto.KopisPerformanceDetailWrapper;
+import com.pickgo.domain.performance.kopis.dto.KopisPerformanceListResponse;
+import com.pickgo.domain.performance.kopis.dto.KopisVenueDetailResponse;
+import com.pickgo.domain.performance.kopis.dto.KopisVenueDetailWrapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -31,29 +37,29 @@ public class KopisService {
 
     // 공연 목록
     @Retryable(
-            retryFor = {IOException.class, HttpClientErrorException.class, RuntimeException.class},
-            backoff = @Backoff(delay = 1000, multiplier = 2)
+        retryFor = {IOException.class, HttpClientErrorException.class, RuntimeException.class},
+        backoff = @Backoff(delay = 1000, multiplier = 2)
     )
     public List<String> fetchPerformanceIds(int page, int size) {
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = startDate.plusMonths(3);
 
         String xml = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/pblprfr")
-                        .queryParam("service", apikey)
-                        .queryParam("stdate", startDate.format(DateTimeFormatter.BASIC_ISO_DATE))
-                        .queryParam("eddate", endDate.format(DateTimeFormatter.BASIC_ISO_DATE))
-                        .queryParam("cpage", page)
-                        .queryParam("rows", size)
-                        .build())
-                .retrieve()
-                .body(String.class);
+            .uri(uriBuilder -> uriBuilder
+                .path("/pblprfr")
+                .queryParam("service", apikey)
+                .queryParam("stdate", startDate.format(DateTimeFormatter.BASIC_ISO_DATE))
+                .queryParam("eddate", endDate.format(DateTimeFormatter.BASIC_ISO_DATE))
+                .queryParam("cpage", page)
+                .queryParam("rows", size)
+                .build())
+            .retrieve()
+            .body(String.class);
 
         try {
             KopisPerformanceListResponse response = xmlMapper.readValue(xml, KopisPerformanceListResponse.class);
             return response.performances().stream()
-                    .map(KopisPerformanceListResponse.KopisPerformanceDto::id).toList();
+                .map(KopisPerformanceListResponse.KopisPerformanceDto::id).toList();
         } catch (Exception e) {
             throw new RuntimeException("공연 목록 xml 파싱 실패", e);
         }
@@ -61,17 +67,17 @@ public class KopisService {
 
     // 공연 상세
     @Retryable(
-            retryFor = {IOException.class, HttpClientErrorException.class, RuntimeException.class},
-            backoff = @Backoff(delay = 1000, multiplier = 2)
+        retryFor = {IOException.class, HttpClientErrorException.class, RuntimeException.class},
+        backoff = @Backoff(delay = 1000, multiplier = 2)
     )
     public KopisPerformanceDetailResponse fetchPerformanceDetail(String performanceId) {
         String xml = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/pblprfr/" + performanceId)
-                        .queryParam("service", apikey)
-                        .build())
-                .retrieve()
-                .body(String.class);
+            .uri(uriBuilder -> uriBuilder
+                .path("/pblprfr/" + performanceId)
+                .queryParam("service", apikey)
+                .build())
+            .retrieve()
+            .body(String.class);
         try {
             return xmlMapper.readValue(xml, KopisPerformanceDetailWrapper.class).detail();
         } catch (Exception e) {
@@ -81,17 +87,17 @@ public class KopisService {
 
     // 공연 시설 상세
     @Retryable(
-            retryFor = {IOException.class, HttpClientErrorException.class, RuntimeException.class},
-            backoff = @Backoff(delay = 1000, multiplier = 2)
+        retryFor = {IOException.class, HttpClientErrorException.class, RuntimeException.class},
+        backoff = @Backoff(delay = 1000, multiplier = 2)
     )
     public KopisVenueDetailResponse fetchVenueDetail(String venueId) {
         String xml = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/prfplc/" + venueId.trim())
-                        .queryParam("service", apikey)
-                        .build())
-                .retrieve()
-                .body(String.class);
+            .uri(uriBuilder -> uriBuilder
+                .path("/prfplc/" + venueId.trim())
+                .queryParam("service", apikey)
+                .build())
+            .retrieve()
+            .body(String.class);
         try {
             return xmlMapper.readValue(xml, KopisVenueDetailWrapper.class).detail();
         } catch (Exception e) {

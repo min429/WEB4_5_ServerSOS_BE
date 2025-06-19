@@ -1,12 +1,9 @@
 package com.pickgo.global.config;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.pickgo.domain.post.post.dto.PostDetailResponse;
-import com.pickgo.domain.post.post.dto.PostSimpleResponse;
-import com.pickgo.global.response.PageResponse;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -22,9 +19,13 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.pickgo.domain.post.post.dto.PostDetailResponse;
+import com.pickgo.domain.post.post.dto.PostSimpleResponse;
+import com.pickgo.global.response.PageResponse;
 
 @Configuration
 @EnableCaching
@@ -51,7 +52,7 @@ public class RedisConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         var serverConfig = config.useSingleServer()
-                .setAddress("redis://" + host + ":" + port);
+            .setAddress("redis://" + host + ":" + port);
 
         // prod에서만 비번 적용
         if (!"test".equals(activeProfile) && password != null && !password.isBlank()) {
@@ -68,42 +69,42 @@ public class RedisConfig {
 
         // 기본 캐시 설정 (목록 조회 등 단순 구조)
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(
-                                new GenericJackson2JsonRedisSerializer(objectMapper)
-                        )
-                );
+            .entryTtl(Duration.ofMinutes(10))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new GenericJackson2JsonRedisSerializer(objectMapper)
+                )
+            );
 
         // 단건 조회(post) 전용 설정 (복잡한 구조)
         Jackson2JsonRedisSerializer<PostDetailResponse> postSerializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, PostDetailResponse.class);
+            new Jackson2JsonRedisSerializer<>(objectMapper, PostDetailResponse.class);
 
         RedisCacheConfiguration postConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(postSerializer)
-                );
+            .entryTtl(Duration.ofMinutes(10))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(postSerializer)
+            );
 
         // PageResponse<PostSimpleResponse> 전용 캐시
         JavaType pageType = objectMapper.getTypeFactory()
-                .constructParametricType(PageResponse.class, PostSimpleResponse.class);
+            .constructParametricType(PageResponse.class, PostSimpleResponse.class);
         Jackson2JsonRedisSerializer<?> postListSerializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, pageType);
+            new Jackson2JsonRedisSerializer<>(objectMapper, pageType);
 
         RedisCacheConfiguration postsConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(postListSerializer)
-                );
+            .entryTtl(Duration.ofMinutes(10))
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(postListSerializer)
+            );
 
         Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
         cacheConfigs.put("post", postConfig);
         cacheConfigs.put("posts", postsConfig);
 
         return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(defaultConfig)
-                .withInitialCacheConfigurations(cacheConfigs)
-                .build();
+            .cacheDefaults(defaultConfig)
+            .withInitialCacheConfigurations(cacheConfigs)
+            .build();
     }
 }

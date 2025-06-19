@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminService {
 
-	private final MemberService memberService;
+    private final MemberService memberService;
 
-	public PageResponse<MemberSimpleResponse> getPagedMembers(Pageable pageable) {
-		return memberService.getPagedMembers(pageable);
-	}
+    public PageResponse<MemberSimpleResponse> getPagedMembers(Pageable pageable) {
+        return memberService.getPagedMembers(pageable);
+    }
 }

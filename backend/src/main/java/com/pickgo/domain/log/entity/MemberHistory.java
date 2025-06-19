@@ -4,6 +4,7 @@ import com.pickgo.domain.log.enums.ActionType;
 import com.pickgo.domain.log.enums.ActorType;
 import com.pickgo.domain.member.member.entity.enums.Authority;
 import com.pickgo.domain.member.member.entity.enums.SocialProvider;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,16 +35,16 @@ public class MemberHistory extends BaseLog {
     private SocialProvider socialProvider;
 
     public MemberHistory(
-            String email,
-            String nickname,
-            Authority authority,
-            SocialProvider socialProvider,
-            String actorId,
-            ActorType actorType,
-            ActionType action,
-            String requestUri,
-            String httpMethod,
-            String description
+        String email,
+        String nickname,
+        Authority authority,
+        SocialProvider socialProvider,
+        String actorId,
+        ActorType actorType,
+        ActionType action,
+        String requestUri,
+        String httpMethod,
+        String description
     ) {
         super(actorId, actorType, action, requestUri, httpMethod, description);
         this.email = email;

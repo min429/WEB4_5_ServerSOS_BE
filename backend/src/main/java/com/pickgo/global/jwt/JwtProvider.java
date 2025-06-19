@@ -45,12 +45,12 @@ public class JwtProvider {
         SecretKey key = getSecretKey();
 
         JwtBuilder builder = Jwts.builder()
-                .header().add(jwtHeader).and()              // 토큰 타입: JWT
-                .signWith(key, Jwts.SIG.HS256)              // 암호화 방식: HMAC-SHA256, secret key 사용
-                .subject(subject)                           // 토큰의 subject (예: 사용자 ID)
-                .issuer(jwtProperties.getIssuer())          // 토큰 발급자
-                .issuedAt(now)                              // 토큰 발급일
-                .expiration(expiryDate);                    // 토큰 만료일
+            .header().add(jwtHeader).and()              // 토큰 타입: JWT
+            .signWith(key, Jwts.SIG.HS256)              // 암호화 방식: HMAC-SHA256, secret key 사용
+            .subject(subject)                           // 토큰의 subject (예: 사용자 ID)
+            .issuer(jwtProperties.getIssuer())          // 토큰 발급자
+            .issuedAt(now)                              // 토큰 발급일
+            .expiration(expiryDate);                    // 토큰 만료일
 
         // 추가로 담을 claims (id, authority 등)
         if (claims != null && !claims.isEmpty()) {

@@ -54,12 +54,12 @@ public class KakaoService {
 
     public RedirectView redirectToKakaoLogin(String origin) {
         String kakaoAuthUrl = UriComponentsBuilder.fromUriString(authorizeUri)
-                .queryParam("client_id", apiKey)
-                .queryParam("redirect_uri", redirectUri)
-                .queryParam("response_type", "code")
-                .queryParam("state", origin)
-                .build()
-                .toString();
+            .queryParam("client_id", apiKey)
+            .queryParam("redirect_uri", redirectUri)
+            .queryParam("response_type", "code")
+            .queryParam("state", origin)
+            .build()
+            .toString();
 
         return new RedirectView(kakaoAuthUrl);
     }
@@ -73,8 +73,8 @@ public class KakaoService {
         tokenService.createRefreshToken(member, response);
 
         String homeUrl = UriComponentsBuilder.fromUriString(origin)
-                .build()
-                .toString();
+            .build()
+            .toString();
 
         LogContext logContext = logContextUtil.extract();
         logWriter.writeMemberLog(member, ActionType.MEMBER_LOGIN_KAKAO, logContext);
@@ -95,9 +95,9 @@ public class KakaoService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
         ResponseEntity<KakaoToken> response = restTemplate.postForEntity(
-                tokenUri,
-                request,
-                KakaoToken.class
+            tokenUri,
+            request,
+            KakaoToken.class
         );
 
         return response.getBody();
@@ -111,9 +111,9 @@ public class KakaoService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
 
         ResponseEntity<KakaoUserInfo> response = restTemplate.postForEntity(
-                userInfoUri,
-                request,
-                KakaoUserInfo.class
+            userInfoUri,
+            request,
+            KakaoUserInfo.class
         );
 
         return response.getBody();

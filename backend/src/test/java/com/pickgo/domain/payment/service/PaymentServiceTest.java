@@ -1,6 +1,6 @@
 package com.pickgo.domain.payment.service;
 
-import static com.pickgo.domain.member.member.entity.enums.Authority.USER;
+import static com.pickgo.domain.member.member.entity.enums.Authority.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.pickgo.domain.log.enums.ActorType;
-import com.pickgo.domain.member.member.entity.enums.SocialProvider;
-import com.pickgo.global.logging.dto.LogContext;
-import com.pickgo.global.logging.util.LogContextUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +22,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.pickgo.domain.log.enums.ActorType;
 import com.pickgo.domain.member.member.entity.Member;
+import com.pickgo.domain.member.member.entity.enums.SocialProvider;
 import com.pickgo.domain.member.member.repository.MemberRepository;
 import com.pickgo.domain.payment.dto.PaymentCreateRequest;
 import com.pickgo.domain.payment.dto.PaymentDetailResponse;
@@ -40,14 +38,16 @@ import com.pickgo.domain.performance.performance.entity.PerformanceState;
 import com.pickgo.domain.performance.performance.entity.PerformanceType;
 import com.pickgo.domain.performance.performance.repository.PerformanceRepository;
 import com.pickgo.domain.performance.performance.repository.PerformanceSessionRepository;
+import com.pickgo.domain.performance.venue.entity.Venue;
+import com.pickgo.domain.performance.venue.repository.VenueRepository;
 import com.pickgo.domain.reservation.entity.Reservation;
 import com.pickgo.domain.reservation.enums.ReservationStatus;
 import com.pickgo.domain.reservation.repository.ReservationRepository;
-import com.pickgo.domain.performance.venue.entity.Venue;
-import com.pickgo.domain.performance.venue.repository.VenueRepository;
-import com.pickgo.global.response.PageResponse;
 import com.pickgo.global.exception.BusinessException;
+import com.pickgo.global.logging.dto.LogContext;
+import com.pickgo.global.logging.util.LogContextUtil;
 import com.pickgo.global.logging.util.LogWriter;
+import com.pickgo.global.response.PageResponse;
 import com.pickgo.global.response.RsCode;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,13 +92,13 @@ class PaymentServiceTest {
 
     private Member getMockMember() {
         Member member = Member.builder()
-                .id(memberId)
-                .email(email)
-                .password(password)
-                .nickname(nickname)
-                .authority(USER)
-                .socialProvider(SocialProvider.NONE)
-                .build();
+            .id(memberId)
+            .email(email)
+            .password(password)
+            .nickname(nickname)
+            .authority(USER)
+            .socialProvider(SocialProvider.NONE)
+            .build();
 
         // 수동으로 createdAt / modifiedAt 설정
         LocalDateTime now = LocalDateTime.now();
@@ -109,65 +109,65 @@ class PaymentServiceTest {
 
     private void setupPerformanceSession() {
         Venue venue = Venue.builder()
-                .name("테스트 공연장")
-                .address("서울시 테스트구")
-                .build();
+            .name("테스트 공연장")
+            .address("서울시 테스트구")
+            .build();
 
         Performance performance = Performance.builder()
-                .name("테스트 공연")
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now().plusDays(1))
-                .runtime("120분")
-                .poster("test.jpg")
-                .state(PerformanceState.SCHEDULED)
-                .minAge("전체관람가")
-                .casts("홍길동 외")
-                .type(PerformanceType.MUSICAL)
-                .venue(venue)
-                .build();
+            .name("테스트 공연")
+            .startDate(LocalDate.now())
+            .endDate(LocalDate.now().plusDays(1))
+            .runtime("120분")
+            .poster("test.jpg")
+            .state(PerformanceState.SCHEDULED)
+            .minAge("전체관람가")
+            .casts("홍길동 외")
+            .type(PerformanceType.MUSICAL)
+            .venue(venue)
+            .build();
 
         performanceSession = PerformanceSession.builder()
-                .performance(performance)
-                .performanceTime(LocalDateTime.now().plusDays(1))
-                .build();
+            .performance(performance)
+            .performanceTime(LocalDateTime.now().plusDays(1))
+            .build();
     }
 
     private Reservation getMockReservation(Member member) {
         return Reservation.builder()
-                .id(reservationId)
-                .member(member)
-                .performanceSession(performanceSession)
-                .totalPrice(20000)
-                .status(ReservationStatus.RESERVED)
-                .build();
+            .id(reservationId)
+            .member(member)
+            .performanceSession(performanceSession)
+            .totalPrice(20000)
+            .status(ReservationStatus.RESERVED)
+            .build();
     }
 
     private Payment getMockPayment(Reservation reservation, PaymentStatus status) {
         return Payment.builder()
-                .id(paymentId)
-                .reservation(reservation)
-                .amount(reservation.getTotalPrice())
-                .status(status)
-                .build();
+            .id(paymentId)
+            .reservation(reservation)
+            .amount(reservation.getTotalPrice())
+            .status(status)
+            .build();
     }
 
     private Reservation getMockReservation2(Member member) {
         return Reservation.builder()
-                .id(2L)
-                .member(member)
-                .performanceSession(performanceSession)
-                .totalPrice(30000)
-                .status(ReservationStatus.RESERVED)
-                .build();
+            .id(2L)
+            .member(member)
+            .performanceSession(performanceSession)
+            .totalPrice(30000)
+            .status(ReservationStatus.RESERVED)
+            .build();
     }
 
     private Payment getMockPayment2(Reservation reservation, PaymentStatus status) {
         return Payment.builder()
-                .id(101L)
-                .reservation(reservation)
-                .amount(reservation.getTotalPrice())
-                .status(status)
-                .build();
+            .id(101L)
+            .reservation(reservation)
+            .amount(reservation.getTotalPrice())
+            .status(status)
+            .build();
     }
 
     @BeforeEach
@@ -181,7 +181,8 @@ class PaymentServiceTest {
         Member member = getMockMember();
         Reservation reservation = getMockReservation(member);
         Payment payment = getMockPayment(reservation, PaymentStatus.PENDING);
-        LogContext mockLogContext = new LogContext("testUrl", "testAction", "testId", ActorType.SYSTEM); // 가짜 로그 컨텍스트 객체
+        LogContext mockLogContext = new LogContext("testUrl", "testAction", "testId",
+            ActorType.SYSTEM); // 가짜 로그 컨텍스트 객체
 
         PaymentCreateRequest request = new PaymentCreateRequest(20000, reservationId);
 
@@ -210,7 +211,7 @@ class PaymentServiceTest {
 
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
         when(paymentRepository.findByReservationMember(eq(member), eq(pageable)))
-                .thenReturn(new PageImpl<>(List.of(payment1, payment2)));
+            .thenReturn(new PageImpl<>(List.of(payment1, payment2)));
 
         PageResponse<PaymentSimpleResponse> result = paymentService.getMyPayments(memberId, pageable);
 
@@ -239,35 +240,35 @@ class PaymentServiceTest {
      * 아래 코드는 주석 처리함.
      */
 
-//    @Test
-//    @DisplayName("결제 승인 성공")
-//    void confirmPayment_success() {
-//        Member member = getMockMember();
-//        Reservation reservation = getMockReservation(member);
-//        Payment payment = getMockPayment(reservation, PaymentStatus.PENDING);
-//
-//        when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(payment));
-//
-//        PaymentConfirmRequest request = new PaymentConfirmRequest("key", "order", 20000);
-//
-//        PaymentDetailResponse result = paymentService.confirmPayment(request);
-//
-//        assertThat(result.paymentStatus()).isEqualTo(PaymentStatus.COMPLETED);
-//    }
-//
-//    @Test
-//    @DisplayName("결제 취소 성공")
-//    void cancelPayment_success() {
-//        Member member = getMockMember();
-//        Reservation reservation = getMockReservation(member);
-//        Payment payment = getMockPayment(reservation, PaymentStatus.COMPLETED);
-//
-//        when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(payment));
-//
-//        PaymentDetailResponse result = paymentService.cancelPayment(paymentId);
-//
-//        assertThat(result.paymentStatus()).isEqualTo(PaymentStatus.CANCELED);
-//    }
+    //    @Test
+    //    @DisplayName("결제 승인 성공")
+    //    void confirmPayment_success() {
+    //        Member member = getMockMember();
+    //        Reservation reservation = getMockReservation(member);
+    //        Payment payment = getMockPayment(reservation, PaymentStatus.PENDING);
+    //
+    //        when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(payment));
+    //
+    //        PaymentConfirmRequest request = new PaymentConfirmRequest("key", "order", 20000);
+    //
+    //        PaymentDetailResponse result = paymentService.confirmPayment(request);
+    //
+    //        assertThat(result.paymentStatus()).isEqualTo(PaymentStatus.COMPLETED);
+    //    }
+    //
+    //    @Test
+    //    @DisplayName("결제 취소 성공")
+    //    void cancelPayment_success() {
+    //        Member member = getMockMember();
+    //        Reservation reservation = getMockReservation(member);
+    //        Payment payment = getMockPayment(reservation, PaymentStatus.COMPLETED);
+    //
+    //        when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(payment));
+    //
+    //        PaymentDetailResponse result = paymentService.cancelPayment(paymentId);
+    //
+    //        assertThat(result.paymentStatus()).isEqualTo(PaymentStatus.CANCELED);
+    //    }
 
     @Test
     @DisplayName("결제 취소 실패 - 상태가 COMPLETED 아님")
@@ -279,7 +280,7 @@ class PaymentServiceTest {
         when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(payment));
 
         assertThatThrownBy(() -> paymentService.cancelPayment(paymentId))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(RsCode.BAD_REQUEST.getMessage());
+            .isInstanceOf(BusinessException.class)
+            .hasMessage(RsCode.BAD_REQUEST.getMessage());
     }
 }

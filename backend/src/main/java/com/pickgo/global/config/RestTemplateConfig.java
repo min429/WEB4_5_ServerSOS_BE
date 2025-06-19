@@ -11,13 +11,13 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
 
-	@Primary
-	@Bean(name = "defaultClient")
-	public RestTemplate defaultRestTemplate(RestTemplateBuilder builder) {
-		return builder
-			.connectTimeout(Duration.ofSeconds(3))
-			.readTimeout(Duration.ofSeconds(5))
-			.build();
-	}
+    @Primary
+    @Bean(name = "defaultClient")
+    public RestTemplate defaultRestTemplate(RestTemplateBuilder builder) {
+        return builder
+            .connectTimeout(Duration.ofSeconds(3))
+            .readTimeout(Duration.ofSeconds(5))
+            .build();
+    }
 }
 

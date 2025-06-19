@@ -31,6 +31,21 @@ public class QueueService {
     private final ServerIdProvider serverIdProvider;
 
     /**
+     * Stream에 publish할 data 생성 (대기열 상태)
+     */
+    private static Map<String, String> genStreamData(Long performanceSessionId, String connectionId,
+        WaitingState waitingState) {
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "wait");
+        data.put("performance_session_id", performanceSessionId.toString());
+        data.put("connection_id", connectionId);
+        data.put("position", String.valueOf(waitingState.position()));
+        data.put("total_count", String.valueOf(waitingState.totalCount()));
+        data.put("estimated_time", String.valueOf(waitingState.estimatedTime()));
+        return data;
+    }
+
+    /**
      * 대기열 입장
      */
     public void enterWaitingLine(Long performanceSessionId, String connectionId) {
@@ -59,7 +74,7 @@ public class QueueService {
      */
     public void publishWaitingState(Long performanceSessionId, String connectionId, WaitingState waitingState) {
         redisStreamPublisher.publish(getStreamKey(connectionId),
-                genStreamData(performanceSessionId, connectionId, waitingState));
+            genStreamData(performanceSessionId, connectionId, waitingState));
     }
 
     /**
@@ -67,7 +82,7 @@ public class QueueService {
      */
     public void publishEntryPermission(Long performanceSessionId, String connectionId) {
         redisStreamPublisher.publish(getStreamKey(connectionId),
-                genStreamData(performanceSessionId, connectionId));
+            genStreamData(performanceSessionId, connectionId));
     }
 
     /**
@@ -110,8 +125,8 @@ public class QueueService {
      */
     public List<Long> getAllPerformanceSessionIds() {
         return queueRepository.getAllKeys().stream()
-                .map(this::extractedPerformanceSessionId)
-                .toList();
+            .map(this::extractedPerformanceSessionId)
+            .toList();
     }
 
     /**
@@ -148,20 +163,6 @@ public class QueueService {
     }
 
     /**
-     * Stream에 publish할 data 생성 (대기열 상태)
-     */
-    private static Map<String, String> genStreamData(Long performanceSessionId, String connectionId, WaitingState waitingState) {
-        Map<String, String> data = new HashMap<>();
-        data.put("type", "wait");
-        data.put("performance_session_id", performanceSessionId.toString());
-        data.put("connection_id", connectionId);
-        data.put("position", String.valueOf(waitingState.position()));
-        data.put("total_count", String.valueOf(waitingState.totalCount()));
-        data.put("estimated_time", String.valueOf(waitingState.estimatedTime()));
-        return data;
-    }
-
-    /**
      * Stream에 publish할 data 생성 (입장 메시지)
      */
     private Map<String, String> genStreamData(Long performanceSessionId, String connectionId) {
@@ -177,11 +178,11 @@ public class QueueService {
      */
     public QueueSession genQueueSession(Long performanceSessionId, UUID userId, String connectionId) {
         return QueueSession.builder()
-                .performanceSessionId(performanceSessionId)
-                .userId(userId)
-                .serverId(serverIdProvider.getServerId())
-                .connectionId(connectionId)
-                .build();
+            .performanceSessionId(performanceSessionId)
+            .userId(userId)
+            .serverId(serverIdProvider.getServerId())
+            .connectionId(connectionId)
+            .build();
     }
 
     /**

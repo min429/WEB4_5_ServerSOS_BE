@@ -1,8 +1,11 @@
 package com.pickgo.domain.log.entity;
 
+import java.time.LocalDateTime;
+
 import com.pickgo.domain.log.enums.ActionType;
 import com.pickgo.domain.log.enums.ActorType;
 import com.pickgo.domain.payment.entity.PaymentStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,8 +14,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -40,18 +41,18 @@ public class PaymentHistory extends BaseLog {
     private LocalDateTime paymentTime;
 
     public PaymentHistory(
-            Long paymentId,
-            PaymentStatus status,
-            Integer amount,
-            String orderId,
-            Long reservationId,
-            LocalDateTime paymentTime,
-            String actorId,
-            ActorType actorType,
-            ActionType action,
-            String requestUri,
-            String httpMethod,
-            String description
+        Long paymentId,
+        PaymentStatus status,
+        Integer amount,
+        String orderId,
+        Long reservationId,
+        LocalDateTime paymentTime,
+        String actorId,
+        ActorType actorType,
+        ActionType action,
+        String requestUri,
+        String httpMethod,
+        String description
     ) {
         super(actorId, actorType, action, requestUri, httpMethod, description);
         this.paymentId = paymentId;

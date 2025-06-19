@@ -3,7 +3,6 @@ package com.pickgo.domain.member.admin.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.pickgo.domain.member.admin.service.AdminService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,27 +18,27 @@ import com.pickgo.global.response.PageResponse;
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
 
-	@Mock
-	private MemberService memberService;
+    @Mock
+    private MemberService memberService;
 
-	@InjectMocks
-	private AdminService adminService;
+    @InjectMocks
+    private AdminService adminService;
 
-	@Test
-	@DisplayName("getPagedMembers 성공")
-	void getPagedMembers_success() {
-		// given
-		Pageable pageable = mock(Pageable.class);
-		PageResponse<MemberSimpleResponse> expectedResponse = mock(PageResponse.class);
+    @Test
+    @DisplayName("getPagedMembers 성공")
+    void getPagedMembers_success() {
+        // given
+        Pageable pageable = mock(Pageable.class);
+        PageResponse<MemberSimpleResponse> expectedResponse = mock(PageResponse.class);
 
-		when(memberService.getPagedMembers(pageable)).thenReturn(expectedResponse);
+        when(memberService.getPagedMembers(pageable)).thenReturn(expectedResponse);
 
-		// when
-		PageResponse<MemberSimpleResponse> result = adminService.getPagedMembers(pageable);
+        // when
+        PageResponse<MemberSimpleResponse> result = adminService.getPagedMembers(pageable);
 
-		// then
-		assertThat(result).isEqualTo(expectedResponse);
-		verify(memberService, times(1)).getPagedMembers(pageable);
-	}
+        // then
+        assertThat(result).isEqualTo(expectedResponse);
+        verify(memberService, times(1)).getPagedMembers(pageable);
+    }
 }
 

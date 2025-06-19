@@ -91,14 +91,14 @@ public abstract class RedisStreamConsumer {
      */
     @SuppressWarnings("unchecked")
     private List<MapRecord<String, Object, Object>> getMessages(String consumerGroup, String consumerName,
-            String streamKey) {
+        String streamKey) {
         try {
             return redisTemplate.opsForStream()
-                    .read(Consumer.from(consumerGroup, consumerName),
-                            StreamReadOptions.empty()
-                                    .block(Duration.ofSeconds(2)) // 최대 2초 대기 후 응답
-                                    .count(getReadCount()),
-                            StreamOffset.create(streamKey, ReadOffset.lastConsumed()));
+                .read(Consumer.from(consumerGroup, consumerName),
+                    StreamReadOptions.empty()
+                        .block(Duration.ofSeconds(2)) // 최대 2초 대기 후 응답
+                        .count(getReadCount()),
+                    StreamOffset.create(streamKey, ReadOffset.lastConsumed()));
         } catch (Exception e) {
             log.warn("Failed to get messages from Redis Stream: {}", e.getMessage());
             return null;

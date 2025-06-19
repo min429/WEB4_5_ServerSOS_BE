@@ -1,8 +1,9 @@
 package com.pickgo.domain.performance.area.seat.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

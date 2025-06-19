@@ -1,12 +1,15 @@
 package com.pickgo.domain.payment.service;
 
+import java.util.UUID;
 
-import com.pickgo.domain.performance.area.seat.entity.SeatStatus;
-import com.pickgo.domain.performance.area.seat.event.SeatStatusChangedEvent;
-import com.pickgo.domain.performance.area.seat.repository.ReservedSeatRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.pickgo.domain.log.enums.ActionType;
-
 import com.pickgo.domain.member.member.entity.Member;
 import com.pickgo.domain.member.member.repository.MemberRepository;
 import com.pickgo.domain.payment.dto.PaymentConfirmRequest;
@@ -16,25 +19,21 @@ import com.pickgo.domain.payment.dto.PaymentSimpleResponse;
 import com.pickgo.domain.payment.entity.Payment;
 import com.pickgo.domain.payment.entity.PaymentStatus;
 import com.pickgo.domain.payment.repository.PaymentRepository;
+import com.pickgo.domain.performance.area.seat.entity.SeatStatus;
+import com.pickgo.domain.performance.area.seat.event.SeatStatusChangedEvent;
+import com.pickgo.domain.performance.area.seat.repository.ReservedSeatRepository;
 import com.pickgo.domain.reservation.entity.Reservation;
 import com.pickgo.domain.reservation.enums.ReservationStatus;
 import com.pickgo.domain.reservation.repository.ReservationRepository;
 import com.pickgo.global.email.EmailService;
+import com.pickgo.global.exception.BusinessException;
 import com.pickgo.global.logging.dto.LogContext;
 import com.pickgo.global.logging.util.LogContextUtil;
-import com.pickgo.global.response.PageResponse;
-import com.pickgo.global.exception.BusinessException;
 import com.pickgo.global.logging.util.LogWriter;
+import com.pickgo.global.response.PageResponse;
 import com.pickgo.global.response.RsCode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -50,12 +49,11 @@ public class PaymentService {
     private final EmailService emailService;
     private final LogContextUtil logContextUtil;
 
-
     @Transactional
     public PaymentDetailResponse createPayment(PaymentCreateRequest request) {
         // 예약 정보를 조회합니다. 만약 없다면 잘못된 결제 생성 이므로 예외를 발생시킵니다.
         Reservation reservation = reservationRepository.findById(request.reservationId())
-                .orElseThrow(() -> new BusinessException(RsCode.NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(RsCode.NOT_FOUND));
 
         if (reservation.getStatus() != ReservationStatus.RESERVED) {
             throw new BusinessException(RsCode.INVALID_RESERVATION_STATE);
@@ -72,12 +70,11 @@ public class PaymentService {
         return PaymentDetailResponse.from(payment);
     }
 
-
     @Transactional(readOnly = true)
     public PageResponse<PaymentSimpleResponse> getMyPayments(UUID memberId, Pageable pageable) {
         // 내 예약 정보 목록을 조회합니다. 클라이언트로 부터 받은 AuthenticationPrincipal 통해 멤버를 조회합니다
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BusinessException(RsCode.NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(RsCode.NOT_FOUND));
 
         // 멤버 정보를 이용하여 결제 정보를 조회합니다. 페이징 처리를 위해 pageable 객체를 사용합니다.
         Page<Payment> payments = paymentRepository.findByReservationMember(member, pageable);
@@ -116,7 +113,7 @@ public class PaymentService {
         payment.cancel();
 
         LogContext logContext = logContextUtil.extract();
-        logWriter.writePaymentLog(payment,ActionType.PAYMENT_CANCELED, logContext);
+        logWriter.writePaymentLog(payment, ActionType.PAYMENT_CANCELED, logContext);
     }
 
     // BusinessException이 발생하면 트랜잭션이 롤백되므로 noRollbackFor 설정. FAILED 상태 저장용
@@ -124,7 +121,7 @@ public class PaymentService {
     public PaymentDetailResponse confirmPayment(PaymentConfirmRequest req) {
         // 결제 과정에서 생성된 payment를 찾아야하므로 클라이언트에 있는 정보인 orderId로 조회
         Payment payment = paymentRepository.findByOrderId(req.orderId())
-                .orElseThrow(() -> new BusinessException(RsCode.NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(RsCode.NOT_FOUND));
 
         // 결제가 만료되었다면 결제 만료 예외
         if (payment.getStatus() == PaymentStatus.EXPIRED) {
@@ -165,15 +162,15 @@ public class PaymentService {
         reservation.getReservedSeats().forEach(seat -> {
             seat.setStatus(SeatStatus.RESERVED);        // 1. 좌석 상태 변경
             reservedSeatRepository.save(seat);          // 2. 좌석 상태 DB 반영
-            applicationEventPublisher.publishEvent(new SeatStatusChangedEvent(seat)); // 좌석 상태 변경 이벤트를 spring에 발행, 구독하고 있는 SSE리스너가 변경 감지 -> 알림 발송
+            applicationEventPublisher.publishEvent(
+                new SeatStatusChangedEvent(seat)); // 좌석 상태 변경 이벤트를 spring에 발행, 구독하고 있는 SSE리스너가 변경 감지 -> 알림 발송
         });
-
 
         // 4. 예약 메일 발송
         emailService.sendReservationEmail(reservation);
 
         LogContext logContext = logContextUtil.extract();
-        logWriter.writePaymentLog(payment,ActionType.PAYMENT_COMPLETED, logContext);
+        logWriter.writePaymentLog(payment, ActionType.PAYMENT_COMPLETED, logContext);
 
         return PaymentDetailResponse.from(payment);
     }

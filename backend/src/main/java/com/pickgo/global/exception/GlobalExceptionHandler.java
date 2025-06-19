@@ -2,8 +2,6 @@ package com.pickgo.global.exception;
 
 import static com.pickgo.global.response.RsCode.*;
 
-import com.pickgo.global.logging.dto.LogContext;
-import com.pickgo.global.logging.util.LogContextUtil;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
@@ -14,6 +12,8 @@ import org.springframework.web.context.request.async.AsyncRequestNotUsableExcept
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 
 import com.pickgo.domain.log.enums.ActionType;
+import com.pickgo.global.logging.dto.LogContext;
+import com.pickgo.global.logging.util.LogContextUtil;
 import com.pickgo.global.logging.util.LogWriter;
 import com.pickgo.global.response.RsData;
 
@@ -36,9 +36,9 @@ public class GlobalExceptionHandler {
     public RsData<?> handleAllExceptions(Exception e) {
         LogContext logContext = logContextUtil.extract();
         logWriter.writeExceptionLog(
-                e,
-                ActionType.EXCEPTION,
-                logContext
+            e,
+            ActionType.EXCEPTION,
+            logContext
         );
         logError(e);
         return RsData.from(INTERNAL_SERVER);
@@ -50,9 +50,9 @@ public class GlobalExceptionHandler {
     ) {
         LogContext logContext = logContextUtil.extract();
         logWriter.writeExceptionLog(
-                exception,
-                ActionType.EXCEPTION,
-                logContext
+            exception,
+            ActionType.EXCEPTION,
+            logContext
         );
         return RsData.from(exception.getRsCode());
     }
@@ -71,9 +71,9 @@ public class GlobalExceptionHandler {
     public RsData<?> handleMissingRequestCookieException(MissingRequestCookieException exception) {
         LogContext logContext = logContextUtil.extract();
         logWriter.writeExceptionLog(
-                exception,
-                ActionType.EXCEPTION,
-                logContext
+            exception,
+            ActionType.EXCEPTION,
+            logContext
         );
         logWarn(exception);
         return RsData.from(UNAUTHENTICATED);
@@ -83,9 +83,9 @@ public class GlobalExceptionHandler {
     public RsData<?> handleMissingServletRequestParameterException(HttpRequestMethodNotSupportedException exception) {
         LogContext logContext = logContextUtil.extract();
         logWriter.writeExceptionLog(
-                exception,
-                ActionType.EXCEPTION,
-                logContext
+            exception,
+            ActionType.EXCEPTION,
+            logContext
         );
         logWarn(exception);
         return RsData.from(BAD_REQUEST);
@@ -95,9 +95,9 @@ public class GlobalExceptionHandler {
     public RsData<?> handleMissingServletRequestParameterException(MissingServletRequestParameterException exception) {
         LogContext logContext = logContextUtil.extract();
         logWriter.writeExceptionLog(
-                exception,
-                ActionType.EXCEPTION,
-                logContext
+            exception,
+            ActionType.EXCEPTION,
+            logContext
         );
         logWarn(exception);
         return RsData.from(BAD_REQUEST);
@@ -109,9 +109,9 @@ public class GlobalExceptionHandler {
     ) {
         LogContext logContext = logContextUtil.extract();
         logWriter.writeExceptionLog(
-                exception,
-                ActionType.EXCEPTION,
-                logContext
+            exception,
+            ActionType.EXCEPTION,
+            logContext
         );
         logWarn(exception);
         return RsData.from(BAD_REQUEST);
@@ -123,9 +123,9 @@ public class GlobalExceptionHandler {
     ) {
         LogContext logContext = logContextUtil.extract();
         logWriter.writeExceptionLog(
-                exception,
-                ActionType.EXCEPTION,
-                logContext
+            exception,
+            ActionType.EXCEPTION,
+            logContext
         );
         logWarn(exception);
         return RsData.from(BAD_REQUEST);
