@@ -54,7 +54,6 @@ public class ExecutorConfig {
     public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setPoolSize(10); // 스레드 풀 크기
-        scheduler.setAwaitTerminationSeconds(60); // 스프링이나 JVM 종료 시, 스레드 풀에 남은 작업을 마무리할 때까지 기다리는 시간 (graceful shutdown)
         scheduler.setThreadNamePrefix("scheduler-task-"); // ThreadNamePrefix: 스레드 식별 가능하도록 prefix 설정
         scheduler.initialize();
         return scheduler;
