@@ -35,21 +35,20 @@ import lombok.RequiredArgsConstructor;
 @Order(1)
 public class IpRateLimitingFilter extends OncePerRequestFilter {
 
-    private final ObjectMapper objectMapper;
     private static final int EXPIRE_MINUTES = 10; // 캐시 만료 시간
     private static final int MAXIMUM_SIZE = 100_000; // 캐시 용량
     private static final int TRIAL_LIMIT = 5; // 주기당 요청 가능 횟수
     private static final int INTERVAL_SECONDS = 10; // 요청 주기
-
+    private final ObjectMapper objectMapper;
     /**
      * IP별 요청 제한 버킷 캐시
      * - 10분간 요청 없으면 캐시 자동 제거
      * - 최대 10만 개 IP까지 저장
      */
     private final Cache<String, Bucket> bucketCache = Caffeine.newBuilder()
-            .expireAfterAccess(EXPIRE_MINUTES, TimeUnit.MINUTES)
-            .maximumSize(MAXIMUM_SIZE)
-            .build();
+        .expireAfterAccess(EXPIRE_MINUTES, TimeUnit.MINUTES)
+        .maximumSize(MAXIMUM_SIZE)
+        .build();
 
     /**
      * 요청 필터 처리
@@ -57,13 +56,13 @@ public class IpRateLimitingFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         // 제한 대상 경로 필터링
         if (!(request.getRequestURI().equals("/api/areas")
-                || request.getRequestURI().equals("/api/areas/subscribe")
+            || request.getRequestURI().equals("/api/areas/subscribe")
         )) {
             filterChain.doFilter(request, response);
             return;
@@ -95,13 +94,13 @@ public class IpRateLimitingFilter extends OncePerRequestFilter {
      */
     private Bucket createNewBucket() {
         Bandwidth limit = Bandwidth.builder()
-                .capacity(TRIAL_LIMIT) // 최대 요청 가능 횟수
-                .refillIntervally(TRIAL_LIMIT, Duration.ofSeconds(INTERVAL_SECONDS)) // 요청 가능 횟수 리필
-                .build();
+            .capacity(TRIAL_LIMIT) // 최대 요청 가능 횟수
+            .refillIntervally(TRIAL_LIMIT, Duration.ofSeconds(INTERVAL_SECONDS)) // 요청 가능 횟수 리필
+            .build();
 
         return Bucket.builder()
-                .addLimit(limit)
-                .build();
+            .addLimit(limit)
+            .build();
     }
 
     /**

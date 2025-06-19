@@ -1,5 +1,13 @@
 package com.pickgo.domain.queue.stream;
 
+import java.io.IOException;
+import java.util.concurrent.Executor;
+
+import org.springframework.core.env.Environment;
+import org.springframework.data.redis.connection.stream.MapRecord;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
+
 import com.pickgo.domain.auth.token.service.TokenService;
 import com.pickgo.domain.queue.dto.EntryPermission;
 import com.pickgo.domain.queue.dto.QueueSession;
@@ -8,14 +16,8 @@ import com.pickgo.global.config.thread.ExecutorConfig;
 import com.pickgo.global.infra.sse.SseHandler;
 import com.pickgo.global.infra.stream.redis.RedisStreamConsumer;
 import com.pickgo.global.init.ServerIdProvider;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
-import org.springframework.data.redis.connection.stream.MapRecord;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.concurrent.Executor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 대기열 Stream Consumer
@@ -24,19 +26,19 @@ import java.util.concurrent.Executor;
 @Component
 public class QueueStreamConsumer extends RedisStreamConsumer {
 
-    private static final String QUEUE_CONSUMER_GROUP_NAME = "queue_consumer_group"; // 대기열 Consumer Group 이름
     public static final String QUEUE_STREAM_PREFIX = "queue_stream"; // 대기열 Stream
+    private static final String QUEUE_CONSUMER_GROUP_NAME = "queue_consumer_group"; // 대기열 Consumer Group 이름
     private final ServerIdProvider serverIdProvider;
     private final SseHandler sseHandler;
     private final ExecutorConfig executorConfig;
     private final TokenService tokenService;
 
     public QueueStreamConsumer(StringRedisTemplate redisTemplate,
-                               ServerIdProvider serverIdProvider,
-                               SseHandler sseHandler,
-                               ExecutorConfig executorConfig,
-                               Environment environment,
-                               TokenService tokenService
+        ServerIdProvider serverIdProvider,
+        SseHandler sseHandler,
+        ExecutorConfig executorConfig,
+        Environment environment,
+        TokenService tokenService
     ) {
         super(redisTemplate, environment);
         this.serverIdProvider = serverIdProvider;

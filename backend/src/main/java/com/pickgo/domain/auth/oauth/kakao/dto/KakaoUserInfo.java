@@ -1,12 +1,12 @@
 package com.pickgo.domain.auth.oauth.kakao.dto;
 
+import static com.pickgo.domain.member.member.entity.enums.Authority.*;
+import static com.pickgo.domain.member.member.entity.enums.SocialProvider.*;
+
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pickgo.domain.member.member.entity.Member;
-
-import static com.pickgo.domain.member.member.entity.enums.Authority.USER;
-import static com.pickgo.domain.member.member.entity.enums.SocialProvider.KAKAO;
 
 public record KakaoUserInfo(
     @JsonProperty("id") Long id,

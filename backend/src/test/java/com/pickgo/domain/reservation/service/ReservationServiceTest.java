@@ -1,14 +1,9 @@
 package com.pickgo.domain.reservation.service;
 
-import com.pickgo.domain.performance.area.area.entity.PerformanceArea;
-import com.pickgo.domain.performance.area.seat.repository.ReservedSeatRepository;
-import com.pickgo.domain.member.member.entity.Member;
-import com.pickgo.domain.performance.performance.entity.PerformanceSession;
-import com.pickgo.domain.reservation.dto.request.ReservationCreateRequest;
-import com.pickgo.domain.reservation.dto.response.ReservationDetailResponse;
-import com.pickgo.domain.reservation.dto.response.ReservationSimpleResponse;
-import com.pickgo.domain.reservation.repository.ReservationRepository;
-import com.pickgo.global.init.TestDataInit;
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +11,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.pickgo.domain.member.member.entity.Member;
+import com.pickgo.domain.performance.area.area.entity.PerformanceArea;
+import com.pickgo.domain.performance.area.seat.repository.ReservedSeatRepository;
+import com.pickgo.domain.performance.performance.entity.PerformanceSession;
+import com.pickgo.domain.reservation.dto.request.ReservationCreateRequest;
+import com.pickgo.domain.reservation.dto.response.ReservationDetailResponse;
+import com.pickgo.domain.reservation.dto.response.ReservationSimpleResponse;
+import com.pickgo.domain.reservation.repository.ReservationRepository;
+import com.pickgo.global.init.TestDataInit;
 
 @SpringBootTest
 @Transactional
@@ -64,8 +65,8 @@ class ReservationServiceTest {
     void createReserve() {
         // given
         var seatDtos = List.of(
-                new ReservationCreateRequest.SeatRequest(area.getId(), 1, 1),
-                new ReservationCreateRequest.SeatRequest(area.getId(), 1, 2)
+            new ReservationCreateRequest.SeatRequest(area.getId(), 1, 1),
+            new ReservationCreateRequest.SeatRequest(area.getId(), 1, 2)
         );
 
         ReservationCreateRequest request = new ReservationCreateRequest(session.getId(), seatDtos);
@@ -85,8 +86,8 @@ class ReservationServiceTest {
     void getReservation() {
         // given
         var seatDtos = List.of(
-                new ReservationCreateRequest.SeatRequest(area.getId(), 1, 1),
-                new ReservationCreateRequest.SeatRequest(area.getId(), 1, 2)
+            new ReservationCreateRequest.SeatRequest(area.getId(), 1, 1),
+            new ReservationCreateRequest.SeatRequest(area.getId(), 1, 2)
         );
 
         ReservationCreateRequest request = new ReservationCreateRequest(session.getId(), seatDtos);
@@ -97,7 +98,6 @@ class ReservationServiceTest {
         // when
         ReservationDetailResponse response = reservationService.getReservation(reservationId, member.getId());
 
-
         // then
         assertThat(response).isNotNull();
         assertThat(response.id()).isEqualTo(reservationId);
@@ -107,33 +107,32 @@ class ReservationServiceTest {
         assertThat(response.seats()).hasSize(seatDtos.size());
     }
 
-
-//    @Test
-//    @DisplayName("예약 취소 성공")
-//    void cancelReservation_success() {
-//        // given: 예약 생성
-//        ReservationCreateRequest request = new ReservationCreateRequest(
-//                session.getId(),
-//                seats.stream().map(Seat::getId).toList()
-//        );
-//
-//        ReservationSimpleResponse response = reservationService.createReservation(member.getId(), request);
-//        Long reservationId = response.id();
-//
-//        // when
-//        reservationService.cancelReservation(reservationId);
-//
-//        // then: 상태가 CANCELED 인지 확인
-//        Reservation canceled = reservationRepository.findById(reservationId)
-//                .orElseThrow();
-//
-//        assertThat(canceled.getStatus()).isEqualTo(ReservationStatus.CANCELED);
-//        assertThat(canceled.getPendingSeats()).isEmpty();
-//
-//        // 좌석 상태도 AVAILABLE로 복구됐는지 확인
-//        for (Seat seat : seats) {
-//            Seat updatedSeat = seatRepository.findById(seat.getId()).orElseThrow();
-//            assertThat(updatedSeat.getStatus()).isEqualTo(SeatStatus.AVAILABLE);
-//        }
-//    }
+    //    @Test
+    //    @DisplayName("예약 취소 성공")
+    //    void cancelReservation_success() {
+    //        // given: 예약 생성
+    //        ReservationCreateRequest request = new ReservationCreateRequest(
+    //                session.getId(),
+    //                seats.stream().map(Seat::getId).toList()
+    //        );
+    //
+    //        ReservationSimpleResponse response = reservationService.createReservation(member.getId(), request);
+    //        Long reservationId = response.id();
+    //
+    //        // when
+    //        reservationService.cancelReservation(reservationId);
+    //
+    //        // then: 상태가 CANCELED 인지 확인
+    //        Reservation canceled = reservationRepository.findById(reservationId)
+    //                .orElseThrow();
+    //
+    //        assertThat(canceled.getStatus()).isEqualTo(ReservationStatus.CANCELED);
+    //        assertThat(canceled.getPendingSeats()).isEmpty();
+    //
+    //        // 좌석 상태도 AVAILABLE로 복구됐는지 확인
+    //        for (Seat seat : seats) {
+    //            Seat updatedSeat = seatRepository.findById(seat.getId()).orElseThrow();
+    //            assertThat(updatedSeat.getStatus()).isEqualTo(SeatStatus.AVAILABLE);
+    //        }
+    //    }
 }

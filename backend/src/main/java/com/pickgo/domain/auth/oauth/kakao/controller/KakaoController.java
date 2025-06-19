@@ -27,9 +27,9 @@ public class KakaoController {
 
     @GetMapping("/login/redirect")
     public RedirectView login(
-            @RequestParam("code") String code,
-            @RequestParam("state") String origin,
-            HttpServletResponse response
+        @RequestParam("code") String code,
+        @RequestParam("state") String origin,
+        HttpServletResponse response
     ) {
         return kakaoService.login(code, origin, response);
     }

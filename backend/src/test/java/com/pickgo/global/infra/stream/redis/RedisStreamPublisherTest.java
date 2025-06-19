@@ -20,13 +20,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Import({RedisStreamPublisher.class})
 class RedisStreamPublisherTest {
 
+    private final String streamKey = "test-stream";
     @Autowired
     private StringRedisTemplate redisTemplate;
-
     @Autowired
     private RedisStreamPublisher publisher;
-
-    private final String streamKey = "test-stream";
 
     @AfterEach
     void tearDown() {
@@ -48,7 +46,7 @@ class RedisStreamPublisherTest {
         var entries = redisTemplate.opsForStream().range(streamKey, Range.unbounded());
         assertThat(entries).isNotEmpty();
         assertThat(entries.getFirst().getValue())
-                .containsEntry("type", "TEST")
-                .containsEntry("key", "value");
+            .containsEntry("type", "TEST")
+            .containsEntry("key", "value");
     }
 }

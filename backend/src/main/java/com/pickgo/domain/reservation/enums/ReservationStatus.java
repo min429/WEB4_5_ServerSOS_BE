@@ -1,6 +1,5 @@
 package com.pickgo.domain.reservation.enums;
 
-
 import lombok.Getter;
 
 @Getter

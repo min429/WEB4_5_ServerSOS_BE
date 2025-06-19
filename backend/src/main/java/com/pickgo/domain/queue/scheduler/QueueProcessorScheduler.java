@@ -29,11 +29,18 @@ public class QueueProcessorScheduler {
     private static volatile long intervalMillis = 1000; // 주기(ms)
     private static volatile int entryCount = 10; // 주기마다 입장할 인원 수
     private final QueueService queueService;
-    private ScheduledFuture<?> scheduledTask;
     private final TaskScheduler taskScheduler;
     private final ExecutorConfig executorConfig;
     private final Environment environment;
     private final EntryCountDecider entryCountDecider;
+    private ScheduledFuture<?> scheduledTask;
+
+    /**
+     * 현재 RPS(초당 입장 처리 인원) 계산
+     */
+    public static double getRps() {
+        return entryCount / ((double)intervalMillis / 1000);
+    }
 
     /**
      * 애플리케이션 시작 시 스케줄러 자동 시작
@@ -90,8 +97,8 @@ public class QueueProcessorScheduler {
 
         // 각 대기열을 병렬로 처리
         performanceSessionIds.forEach(performanceSessionId ->
-                CompletableFuture.runAsync(() -> processQueue(performanceSessionId),
-                        executorConfig.queueThreadPoolTaskExecutor()));
+            CompletableFuture.runAsync(() -> processQueue(performanceSessionId),
+                executorConfig.queueThreadPoolTaskExecutor()));
     }
 
     /**
@@ -103,8 +110,8 @@ public class QueueProcessorScheduler {
 
         // 각 인원을 비동기로 입장 처리
         connectionIds.forEach(connectionId ->
-                CompletableFuture.runAsync(() -> processEntry(performanceSessionId, connectionId),
-                        executorConfig.queueThreadPoolTaskExecutor())
+            CompletableFuture.runAsync(() -> processEntry(performanceSessionId, connectionId),
+                executorConfig.queueThreadPoolTaskExecutor())
         );
 
         // 대기열 상태 publish
@@ -126,22 +133,19 @@ public class QueueProcessorScheduler {
         // 대기열에 남아있는 전체 사용자 조회
         List<String> connectionIds = queueService.getLine(performanceSessionId);
 
-        // 대기열 상태 publish를 비동기로 수행
-        connectionIds.forEach(connectionId -> CompletableFuture.runAsync(() -> {
-            // 대기열 상태 조회
-            int position = queueService.getPosition(performanceSessionId, connectionId);
-            int totalCount = queueService.getSize(performanceSessionId);
+        // 총 인원 수
+        int totalCount = connectionIds.size();
 
-            // 대기열 상태 발행
-            WaitingState waitingState = WaitingState.of(position, totalCount, getRps());
-            queueService.publishWaitingState(performanceSessionId, connectionId, waitingState);
-        }, executorConfig.queueThreadPoolTaskExecutor()));
-    }
+        for (int i = 0; i < totalCount; i++) {
+            String connectionId = connectionIds.get(i);
+            int position = i + 1; // 대기 번호
 
-    /**
-     * 현재 RPS(초당 입장 처리 인원) 계산
-     */
-    public static double getRps() {
-        return entryCount / ((double) intervalMillis / 1000);
+            // 대기열 상태 publish를 비동기로 수행
+            CompletableFuture.runAsync(() -> {
+                // 대기열 상태 발행
+                WaitingState waitingState = WaitingState.of(position, totalCount, getRps());
+                queueService.publishWaitingState(performanceSessionId, connectionId, waitingState);
+            }, executorConfig.queueThreadPoolTaskExecutor());
+        }
     }
 }

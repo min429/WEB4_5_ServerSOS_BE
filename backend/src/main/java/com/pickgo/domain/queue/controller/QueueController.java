@@ -31,12 +31,12 @@ public class QueueController {
     @Operation(summary = "공연 예매 대기열 입장 및 구독")
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(
-            @AuthenticationPrincipal MemberPrincipal principal,
-            @RequestParam("sessionId") Long performanceSessionId
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @RequestParam("sessionId") Long performanceSessionId
     ) {
         // SSE 세션 정보 생성 
         QueueSession session = queueService.genQueueSession(performanceSessionId, principal.id(),
-                sseHandler.genConnectionId());
+            sseHandler.genConnectionId());
 
         // 대기열 입장
         queueService.enterWaitingLine(performanceSessionId, session.getConnectionId());

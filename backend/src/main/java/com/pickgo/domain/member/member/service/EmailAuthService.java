@@ -1,20 +1,21 @@
 package com.pickgo.domain.member.member.service;
 
-import com.pickgo.global.email.EmailService;
-import lombok.RequiredArgsConstructor;
+import java.time.Duration;
+import java.util.Random;
+
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.util.Random;
+import com.pickgo.global.email.EmailService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class EmailAuthService {
+    private static final Duration EXPIRE_DURATION = Duration.ofMinutes(5);
     private final EmailService emailService;
     private final StringRedisTemplate redisTemplate;
-
-    private static final Duration EXPIRE_DURATION = Duration.ofMinutes(5);
 
     public void sendCode(String email) {
         String code = generateCode();

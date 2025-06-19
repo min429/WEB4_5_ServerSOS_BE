@@ -1,9 +1,9 @@
 package com.pickgo.domain.queue.dto;
 
 public record WaitingState(
-        int position, // 대기번호
-        int totalCount, // 총 대기인원
-        String estimatedTime // 예상 대기시간
+    int position, // 대기번호
+    int totalCount, // 총 대기인원
+    String estimatedTime // 예상 대기시간
 ) {
     public static WaitingState of(int position, int totalCount, double rps) {
         // rps 기준으로 예상 대기시간(초) 계산

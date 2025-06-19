@@ -1,15 +1,17 @@
 package com.pickgo.domain.performance.area.seat.event;
 
-import com.pickgo.domain.performance.area.seat.dto.SeatUpdateResponse;
-import com.pickgo.domain.performance.area.seat.entity.ReservedSeat;
-import com.pickgo.domain.performance.area.seat.service.SeatNotificationService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import com.pickgo.domain.performance.area.seat.dto.SeatUpdateResponse;
+import com.pickgo.domain.performance.area.seat.entity.ReservedSeat;
+import com.pickgo.domain.performance.area.seat.service.SeatNotificationService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor

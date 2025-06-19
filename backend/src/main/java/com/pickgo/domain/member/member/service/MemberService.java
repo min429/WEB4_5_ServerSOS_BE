@@ -168,12 +168,12 @@ public class MemberService {
 
     public Member getEntity(UUID id) {
         return memberRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
     }
 
     public Member getEntity(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
     }
 
     public boolean existsByEmail(String email) {

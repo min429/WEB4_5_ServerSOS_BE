@@ -35,7 +35,6 @@ class SeatControllerTest {
     @Autowired
     private TestToken token;
 
-
     @Test
     @DisplayName("GET /api/areas/subscribe - SSE 연결 성공")
     void subscribe_success() throws Exception {
@@ -45,10 +44,10 @@ class SeatControllerTest {
 
         // when & then
         mockMvc.perform(get("/api/areas/subscribe")
-                        .header("Authorization", "Bearer " + token.userToken)
-                        .header("EntryAuth", "Bearer " + token.entryToken)
-                        .param("sessionId", "1")
-                        .accept(MediaType.TEXT_EVENT_STREAM))
-                .andExpect(status().isOk());
+                .header("Authorization", "Bearer " + token.userToken)
+                .header("EntryAuth", "Bearer " + token.entryToken)
+                .param("sessionId", "1")
+                .accept(MediaType.TEXT_EVENT_STREAM))
+            .andExpect(status().isOk());
     }
 }

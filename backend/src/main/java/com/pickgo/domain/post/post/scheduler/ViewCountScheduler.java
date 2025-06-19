@@ -1,13 +1,15 @@
 package com.pickgo.domain.post.post.scheduler;
 
-import com.pickgo.domain.post.post.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.Set;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import com.pickgo.domain.post.post.repository.PostRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

@@ -1,6 +1,5 @@
 package com.pickgo.domain.log.enums;
 
-
 import lombok.Getter;
 
 @Getter

@@ -1,15 +1,17 @@
 package com.pickgo.global.init;
 
-import com.pickgo.domain.member.member.dto.MemberCreateRequest;
-import com.pickgo.domain.member.member.service.MemberService;
-import com.pickgo.domain.performance.performance.repository.PerformanceRepository;
-import com.pickgo.domain.performance.performance.service.PerformanceService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
+
+import com.pickgo.domain.member.member.dto.MemberCreateRequest;
+import com.pickgo.domain.member.member.service.MemberService;
+import com.pickgo.domain.performance.performance.repository.PerformanceRepository;
+import com.pickgo.domain.performance.performance.service.PerformanceService;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,7 +21,6 @@ public class BaseInitData {
     private final PerformanceRepository performanceRepository;
     private final MemberService memberService;
     private final StringRedisTemplate redisTemplate;
-
 
     @Bean
     public ApplicationRunner applicationRunner() {

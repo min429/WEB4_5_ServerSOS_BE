@@ -1,12 +1,17 @@
 package com.pickgo.domain.log.entity;
 
+import java.time.LocalDateTime;
+
 import com.pickgo.domain.log.enums.ActionType;
 import com.pickgo.domain.log.enums.ActorType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.*;
-
-import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -40,20 +45,20 @@ public class ReservationHistory extends BaseLog {
     private String venueName;
 
     public ReservationHistory(
-            Long reservationId,
-            String status,
-            int totalPrice,
-            LocalDateTime reservationTime,
-            Long performanceSessionId,
-            String performanceName,
-            String performanceType,
-            String venueName,
-            String actorId,
-            ActorType actorType,
-            ActionType action,
-            String requestUri,
-            String httpMethod,
-            String description
+        Long reservationId,
+        String status,
+        int totalPrice,
+        LocalDateTime reservationTime,
+        Long performanceSessionId,
+        String performanceName,
+        String performanceType,
+        String venueName,
+        String actorId,
+        ActorType actorType,
+        ActionType action,
+        String requestUri,
+        String httpMethod,
+        String description
     ) {
         super(actorId, actorType, action, requestUri, httpMethod, description);
         this.reservationId = reservationId;

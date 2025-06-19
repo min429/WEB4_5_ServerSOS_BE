@@ -1,11 +1,13 @@
 package com.pickgo.domain.post.post.util;
 
-import com.pickgo.domain.member.member.dto.MemberPrincipal;
-import com.pickgo.global.jwt.JwtProvider;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import com.pickgo.domain.member.member.dto.MemberPrincipal;
+import com.pickgo.global.jwt.JwtProvider;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class IdentifierResolver {
                 return "MEMBER_" + id.toString();
             }
         } catch (Exception ignored) {
-            
+
         }
 
         return "IP_" + request.getRemoteAddr();

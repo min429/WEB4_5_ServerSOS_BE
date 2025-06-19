@@ -38,26 +38,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .headers(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
-                .rememberMe(AbstractHttpConfigurer::disable) // 로그인 기억 기능 비활성화
-                .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증 비활성화
-                .formLogin(AbstractHttpConfigurer::disable) // Form 기반 로그인 비활성화
-                .anonymous(AbstractHttpConfigurer::disable) // 익명 사용자 처리 비활성화
+            .headers(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
+            .rememberMe(AbstractHttpConfigurer::disable) // 로그인 기억 기능 비활성화
+            .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증 비활성화
+            .formLogin(AbstractHttpConfigurer::disable) // Form 기반 로그인 비활성화
+            .anonymous(AbstractHttpConfigurer::disable) // 익명 사용자 처리 비활성화
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // 권한 검증
-                        .anyRequest().permitAll()) // 그 외는 jwt 필터로 인증 검증
-                .sessionManagement(configurer ->
-                        configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // STATELESS 방식
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // jwt 필터 추가
-                .addFilterAfter(entryAuthenticationFilter, JwtAuthenticationFilter.class) // 인증 필터 추가
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)) // 인증 실패 시 수행할 작업 설정
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedHandler(jwtAccessDeniedHandler)) // 인가 실패 시 수행할 작업 설정
-                .build();
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/admin/**").hasRole("ADMIN") // 권한 검증
+                .anyRequest().permitAll()) // 그 외는 jwt 필터로 인증 검증
+            .sessionManagement(configurer ->
+                configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // STATELESS 방식
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // jwt 필터 추가
+            .addFilterAfter(entryAuthenticationFilter, JwtAuthenticationFilter.class) // 인증 필터 추가
+            .exceptionHandling(exceptionHandling ->
+                exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)) // 인증 실패 시 수행할 작업 설정
+            .exceptionHandling(exceptionHandling ->
+                exceptionHandling.accessDeniedHandler(jwtAccessDeniedHandler)) // 인가 실패 시 수행할 작업 설정
+            .build();
     }
 
     @Bean

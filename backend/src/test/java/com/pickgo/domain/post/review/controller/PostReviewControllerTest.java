@@ -49,40 +49,40 @@ class PostReviewControllerTest {
         String sort = "latest";
 
         List<PostReviewWithLikeResponse> mockReviews = List.of(
-                PostReviewWithLikeResponse.builder()
-                        .reviewId(97L)
-                        .userId(UUID.randomUUID())
-                        .profile("profile1.jpg")
-                        .nickname("작성자1")
-                        .content("좋아요")
-                        .build(),
-                PostReviewWithLikeResponse.builder()
-                        .reviewId(96L)
-                        .userId(UUID.randomUUID())
-                        .profile("profile2.jpg")
-                        .nickname("작성자2")
-                        .content("별로에요")
-                        .build()
+            PostReviewWithLikeResponse.builder()
+                .reviewId(97L)
+                .userId(UUID.randomUUID())
+                .profile("profile1.jpg")
+                .nickname("작성자1")
+                .content("좋아요")
+                .build(),
+            PostReviewWithLikeResponse.builder()
+                .reviewId(96L)
+                .userId(UUID.randomUUID())
+                .profile("profile2.jpg")
+                .nickname("작성자2")
+                .content("별로에요")
+                .build()
         );
 
         Mockito.when(postReviewService.getReviewsByPostId(
-                eq(postId),
-                eq(cursorId),
-                eq(Integer.MAX_VALUE),
-                eq(size),
-                eq(sort),
-                isNull()
+            eq(postId),
+            eq(cursorId),
+            eq(Integer.MAX_VALUE),
+            eq(size),
+            eq(sort),
+            isNull()
         )).thenReturn(mockReviews);
 
         // when & then
         mockMvc.perform(get("/api/posts/{id}/reviews", postId)
-                        .param("cursorId", cursorId.toString())
-                        .param("size", String.valueOf(size))
-                        .param("sort", sort))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data[0].reviewId").value(97))
-                .andExpect(jsonPath("$.data[1].reviewId").value(96));
+                .param("cursorId", cursorId.toString())
+                .param("size", String.valueOf(size))
+                .param("sort", sort))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(200))
+            .andExpect(jsonPath("$.data[0].reviewId").value(97))
+            .andExpect(jsonPath("$.data[1].reviewId").value(96));
     }
 
     @Test
@@ -96,128 +96,128 @@ class PostReviewControllerTest {
         String sort = "like";
 
         List<PostReviewWithLikeResponse> mockReviews = List.of(
-                PostReviewWithLikeResponse.builder()
-                        .reviewId(96L)
-                        .userId(UUID.randomUUID())
-                        .profile("profile1.jpg")
-                        .nickname("작성자1")
-                        .content("좋아요")
-                        .likeCount(24)
-                        .build(),
-                PostReviewWithLikeResponse.builder()
-                        .reviewId(98L)
-                        .userId(UUID.randomUUID())
-                        .profile("profile3.jpg")
-                        .nickname("작성자3")
-                        .content("별로에요22")
-                        .likeCount(13)
-                        .build(),
-                PostReviewWithLikeResponse.builder()
-                        .reviewId(97L)
-                        .userId(UUID.randomUUID())
-                        .profile("profile2.jpg")
-                        .nickname("작성자2")
-                        .content("별로에요")
-                        .likeCount(13)
-                        .build()
+            PostReviewWithLikeResponse.builder()
+                .reviewId(96L)
+                .userId(UUID.randomUUID())
+                .profile("profile1.jpg")
+                .nickname("작성자1")
+                .content("좋아요")
+                .likeCount(24)
+                .build(),
+            PostReviewWithLikeResponse.builder()
+                .reviewId(98L)
+                .userId(UUID.randomUUID())
+                .profile("profile3.jpg")
+                .nickname("작성자3")
+                .content("별로에요22")
+                .likeCount(13)
+                .build(),
+            PostReviewWithLikeResponse.builder()
+                .reviewId(97L)
+                .userId(UUID.randomUUID())
+                .profile("profile2.jpg")
+                .nickname("작성자2")
+                .content("별로에요")
+                .likeCount(13)
+                .build()
         );
 
         Mockito.when(postReviewService.getReviewsByPostId(
-                eq(postId),
-                eq(cursorId),
-                eq(cursorLikeCount),
-                eq(size),
-                eq(sort),
-                isNull()
+            eq(postId),
+            eq(cursorId),
+            eq(cursorLikeCount),
+            eq(size),
+            eq(sort),
+            isNull()
         )).thenReturn(mockReviews);
 
         // when & then
         mockMvc.perform(get("/api/posts/{id}/reviews", postId)
-                        .param("cursorId", cursorId.toString())
-                        .param("cursorLikeCount", String.valueOf(cursorLikeCount))
-                        .param("size", String.valueOf(size))
-                        .param("sort", sort))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data[0].likeCount").value(24))
-                .andExpect(jsonPath("$.data[1].likeCount").value(13))
-                .andExpect(jsonPath("$.data[1].reviewId").value(98));
+                .param("cursorId", cursorId.toString())
+                .param("cursorLikeCount", String.valueOf(cursorLikeCount))
+                .param("size", String.valueOf(size))
+                .param("sort", sort))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(200))
+            .andExpect(jsonPath("$.data[0].likeCount").value(24))
+            .andExpect(jsonPath("$.data[1].likeCount").value(13))
+            .andExpect(jsonPath("$.data[1].reviewId").value(98));
     }
 
-//    @Test
-//    @DisplayName("게시글 리뷰 작성")
-//    void createReview() throws Exception {
-//        // given
-//        Long postId = 1L;
-//        UUID memberId = UUID.fromString("33333333-3333-3333-3333-333333333333");
-//        PostReviewContentRequest request = new PostReviewContentRequest("좋은 글입니다.");
-//
-//        PostReviewSimpleResponse mockResponse = PostReviewSimpleResponse.builder()
-//                .reviewId(1L)
-//                .userId(memberId)
-//                .profile("profile.jpg")
-//                .nickname("작성자1")
-//                .content("좋은 글입니다.")
-//                .build();
-//
-//        Mockito.when(postReviewService.createReview(eq(postId), eq(memberId), eq(request.content())))
-//                .thenReturn(mockResponse);
-//
-//        // when & then
-//        mockMvc.perform(post("/api/posts/{id}/reviews", postId)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.code").value(RsCode.REVIEW_CREATED.getCode()))
-//                .andExpect(jsonPath("$.data.content").value("좋은 글입니다."));
-//    }
-//
-//    @Test
-//    @DisplayName("게시글 리뷰 수정")
-//    void updateReview() throws Exception {
-//        // given
-//        Long postId = 1L;
-//        Long reviewId = 1L;
-//        UUID memberId = UUID.randomUUID();
-//
-//        PostReviewContentRequest request = new PostReviewContentRequest("수정된 리뷰 내용");
-//
-//        PostReviewSimpleResponse mockResponse = PostReviewSimpleResponse.builder()
-//                .reviewId(reviewId)
-//                .userId(memberId)
-//                .profile("profile.jpg")
-//                .nickname("작성자1")
-//                .content("수정된 리뷰 내용")
-//                .build();
-//
-//        Mockito.when(postReviewService.updateReview(eq(postId), eq(reviewId), eq(request.content()), eq(memberId)))
-//                .thenReturn(mockResponse);
-//
-//        // when & then
-//        mockMvc.perform(put("/api/posts/{id}/reviews/{reviewId}", postId, reviewId)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request)))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.code").value(RsCode.REVIEW_UPDATED.getCode()))
-//                .andExpect(jsonPath("$.data.content").value("수정된 리뷰 내용"));
-//    }
-//
-//    @Test
-//    @DisplayName("게시글 리뷰 삭제")
-//    void deleteReview() throws Exception {
-//        // given
-//        Long postId = 1L;
-//        Long reviewId = 1L;
-//        UUID memberId = UUID.randomUUID();
-//
-//        Mockito.doNothing().when(postReviewService).deleteReview(postId, reviewId,memberId);
-//
-//        // when & then
-//        mockMvc.perform(delete("/api/posts/{id}/reviews/{reviewId}", postId, reviewId))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.code").value(RsCode.REVIEW_DELETED.getCode()))
-//                .andExpect(jsonPath("$.message").value("리뷰가 삭제되었습니다."));
-//    }
+    //    @Test
+    //    @DisplayName("게시글 리뷰 작성")
+    //    void createReview() throws Exception {
+    //        // given
+    //        Long postId = 1L;
+    //        UUID memberId = UUID.fromString("33333333-3333-3333-3333-333333333333");
+    //        PostReviewContentRequest request = new PostReviewContentRequest("좋은 글입니다.");
+    //
+    //        PostReviewSimpleResponse mockResponse = PostReviewSimpleResponse.builder()
+    //                .reviewId(1L)
+    //                .userId(memberId)
+    //                .profile("profile.jpg")
+    //                .nickname("작성자1")
+    //                .content("좋은 글입니다.")
+    //                .build();
+    //
+    //        Mockito.when(postReviewService.createReview(eq(postId), eq(memberId), eq(request.content())))
+    //                .thenReturn(mockResponse);
+    //
+    //        // when & then
+    //        mockMvc.perform(post("/api/posts/{id}/reviews", postId)
+    //                        .contentType(MediaType.APPLICATION_JSON)
+    //                        .content(objectMapper.writeValueAsString(request)))
+    //                .andExpect(status().isCreated())
+    //                .andExpect(jsonPath("$.code").value(RsCode.REVIEW_CREATED.getCode()))
+    //                .andExpect(jsonPath("$.data.content").value("좋은 글입니다."));
+    //    }
+    //
+    //    @Test
+    //    @DisplayName("게시글 리뷰 수정")
+    //    void updateReview() throws Exception {
+    //        // given
+    //        Long postId = 1L;
+    //        Long reviewId = 1L;
+    //        UUID memberId = UUID.randomUUID();
+    //
+    //        PostReviewContentRequest request = new PostReviewContentRequest("수정된 리뷰 내용");
+    //
+    //        PostReviewSimpleResponse mockResponse = PostReviewSimpleResponse.builder()
+    //                .reviewId(reviewId)
+    //                .userId(memberId)
+    //                .profile("profile.jpg")
+    //                .nickname("작성자1")
+    //                .content("수정된 리뷰 내용")
+    //                .build();
+    //
+    //        Mockito.when(postReviewService.updateReview(eq(postId), eq(reviewId), eq(request.content()), eq(memberId)))
+    //                .thenReturn(mockResponse);
+    //
+    //        // when & then
+    //        mockMvc.perform(put("/api/posts/{id}/reviews/{reviewId}", postId, reviewId)
+    //                        .contentType(MediaType.APPLICATION_JSON)
+    //                        .content(objectMapper.writeValueAsString(request)))
+    //                .andExpect(status().isOk())
+    //                .andExpect(jsonPath("$.code").value(RsCode.REVIEW_UPDATED.getCode()))
+    //                .andExpect(jsonPath("$.data.content").value("수정된 리뷰 내용"));
+    //    }
+    //
+    //    @Test
+    //    @DisplayName("게시글 리뷰 삭제")
+    //    void deleteReview() throws Exception {
+    //        // given
+    //        Long postId = 1L;
+    //        Long reviewId = 1L;
+    //        UUID memberId = UUID.randomUUID();
+    //
+    //        Mockito.doNothing().when(postReviewService).deleteReview(postId, reviewId,memberId);
+    //
+    //        // when & then
+    //        mockMvc.perform(delete("/api/posts/{id}/reviews/{reviewId}", postId, reviewId))
+    //                .andExpect(status().isOk())
+    //                .andExpect(jsonPath("$.code").value(RsCode.REVIEW_DELETED.getCode()))
+    //                .andExpect(jsonPath("$.message").value("리뷰가 삭제되었습니다."));
+    //    }
 
     @Test
     @DisplayName("리뷰 좋아요")
@@ -240,9 +240,9 @@ class PostReviewControllerTest {
 
         // when & then
         mockMvc.perform(post("/api/posts/{id}/reviews/{reviewId}/like", postId, reviewId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
-                .andExpect(jsonPath("$.data").value("리뷰에 좋아요를 추가했습니다."));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
+            .andExpect(jsonPath("$.data").value("리뷰에 좋아요를 추가했습니다."));
     }
 
     @Test
@@ -266,9 +266,9 @@ class PostReviewControllerTest {
 
         // when & then
         mockMvc.perform(delete("/api/posts/{id}/reviews/{reviewId}/like", postId, reviewId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
-                .andExpect(jsonPath("$.data").value("리뷰 좋아요를 취소했습니다."));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
+            .andExpect(jsonPath("$.data").value("리뷰 좋아요를 취소했습니다."));
     }
 
     @Test
@@ -291,19 +291,19 @@ class PostReviewControllerTest {
         // 첫 번째 호출은 doNothing()
         // 두 번째 호출은 예외 발생
         Mockito.doNothing()
-                .doThrow(new BusinessException(RsCode.REVIEW_ALREADY_LIKED))
-                .when(postReviewService).likeReview(postId, reviewId, memberId);
+            .doThrow(new BusinessException(RsCode.REVIEW_ALREADY_LIKED))
+            .when(postReviewService).likeReview(postId, reviewId, memberId);
 
         // when & then
         mockMvc.perform(post("/api/posts/{id}/reviews/{reviewId}/like", postId, reviewId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
-                .andExpect(jsonPath("$.data").value("리뷰에 좋아요를 추가했습니다."));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
+            .andExpect(jsonPath("$.data").value("리뷰에 좋아요를 추가했습니다."));
 
         mockMvc.perform(post("/api/posts/{id}/reviews/{reviewId}/like", postId, reviewId))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(RsCode.REVIEW_ALREADY_LIKED.getCode()))
-                .andExpect(jsonPath("$.message").value(RsCode.REVIEW_ALREADY_LIKED.getMessage()));
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value(RsCode.REVIEW_ALREADY_LIKED.getCode()))
+            .andExpect(jsonPath("$.message").value(RsCode.REVIEW_ALREADY_LIKED.getMessage()));
     }
 
     @Test
@@ -326,19 +326,19 @@ class PostReviewControllerTest {
         // 첫 번째 호출은 doNothing()
         // 두 번째 호출은 예외 발생
         Mockito.doNothing()
-                .doThrow(new BusinessException(RsCode.REVIEW_NOT_LIKED_YET))
-                .when(postReviewService).cancelLikeReview(postId, reviewId, memberId);
+            .doThrow(new BusinessException(RsCode.REVIEW_NOT_LIKED_YET))
+            .when(postReviewService).cancelLikeReview(postId, reviewId, memberId);
 
         // when & then
         mockMvc.perform(delete("/api/posts/{id}/reviews/{reviewId}/like", postId, reviewId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
-                .andExpect(jsonPath("$.data").value("리뷰 좋아요를 취소했습니다."));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
+            .andExpect(jsonPath("$.data").value("리뷰 좋아요를 취소했습니다."));
 
         mockMvc.perform(delete("/api/posts/{id}/reviews/{reviewId}/like", postId, reviewId))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value(RsCode.REVIEW_NOT_LIKED_YET.getCode()))
-                .andExpect(jsonPath("$.message").value(RsCode.REVIEW_NOT_LIKED_YET.getMessage()));
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value(RsCode.REVIEW_NOT_LIKED_YET.getCode()))
+            .andExpect(jsonPath("$.message").value(RsCode.REVIEW_NOT_LIKED_YET.getMessage()));
     }
 
     @Test
@@ -348,88 +348,87 @@ class PostReviewControllerTest {
         Long postId = 1L;
 
         List<PostReviewWithLikeResponse> mockReviews = List.of(
-                PostReviewWithLikeResponse.builder()
-                        .reviewId(1L)
-                        .userId(UUID.randomUUID())
-                        .profile("profile1.jpg")
-                        .nickname("작성자1")
-                        .content("내용1")
-                        .likeCount(5)
-                        .likedByCurrentUser(false)
-                        .build(),
-                PostReviewWithLikeResponse.builder()
-                        .reviewId(2L)
-                        .userId(UUID.randomUUID())
-                        .profile("profile2.jpg")
-                        .nickname("작성자2")
-                        .content("내용2")
-                        .likeCount(3)
-                        .likedByCurrentUser(false)
-                        .build()
+            PostReviewWithLikeResponse.builder()
+                .reviewId(1L)
+                .userId(UUID.randomUUID())
+                .profile("profile1.jpg")
+                .nickname("작성자1")
+                .content("내용1")
+                .likeCount(5)
+                .likedByCurrentUser(false)
+                .build(),
+            PostReviewWithLikeResponse.builder()
+                .reviewId(2L)
+                .userId(UUID.randomUUID())
+                .profile("profile2.jpg")
+                .nickname("작성자2")
+                .content("내용2")
+                .likeCount(3)
+                .likedByCurrentUser(false)
+                .build()
         );
 
         Mockito.when(postReviewService.getReviewsByPostId(
-                eq(postId),
-                eq(Long.MAX_VALUE),
-                eq(Integer.MAX_VALUE),
-                eq(10),
-                eq("latest"),
-                isNull()
+            eq(postId),
+            eq(Long.MAX_VALUE),
+            eq(Integer.MAX_VALUE),
+            eq(10),
+            eq("latest"),
+            isNull()
         )).thenReturn(mockReviews);
 
         // when & then
         mockMvc.perform(get("/api/posts/{id}/reviews", postId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
-                .andExpect(jsonPath("$.data[0].likedByCurrentUser").value(false))
-                .andExpect(jsonPath("$.data[1].likedByCurrentUser").value(false));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
+            .andExpect(jsonPath("$.data[0].likedByCurrentUser").value(false))
+            .andExpect(jsonPath("$.data[1].likedByCurrentUser").value(false));
     }
 
-//    @Test
-//    @DisplayName("회원 리뷰 목록 조회 - 좋아요 누른 리뷰 likedByCurrentUser는 true")
-//    void getReviewsAsMemberWithLike() throws Exception {
-//        // given
-//        Long postId = 1L;
-//        String token = "Bearer test-token";
-//
-//        List<PostReviewWithLikeResponse> mockReviews = List.of(
-//                PostReviewWithLikeResponse.builder()
-//                        .reviewId(1L)
-//                        .userId(UUID.randomUUID())
-//                        .profile("profile1.jpg")
-//                        .nickname("작성자1")
-//                        .content("내용1")
-//                        .likeCount(5)
-//                        .likedByCurrentUser(true)
-//                        .build(),
-//                PostReviewWithLikeResponse.builder()
-//                        .reviewId(2L)
-//                        .userId(UUID.randomUUID())
-//                        .profile("profile2.jpg")
-//                        .nickname("작성자2")
-//                        .content("내용2")
-//                        .likeCount(3)
-//                        .likedByCurrentUser(false)
-//                        .build()
-//        );
-//
-//        Mockito.when(postReviewService.getReviewsByPostId(
-//                eq(postId),
-//                eq(Long.MAX_VALUE),
-//                eq(Integer.MAX_VALUE),
-//                eq(10),
-//                eq("latest"),
-//                eq(token)
-//        )).thenReturn(mockReviews);
-//
-//        // when & then
-//        mockMvc.perform(get("/api/posts/{id}/reviews", postId)
-//                        .header("Authorization", token))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
-//                .andExpect(jsonPath("$.data[0].likedByCurrentUser").value(true))
-//                .andExpect(jsonPath("$.data[1].likedByCurrentUser").value(false));
-//    }
-
+    //    @Test
+    //    @DisplayName("회원 리뷰 목록 조회 - 좋아요 누른 리뷰 likedByCurrentUser는 true")
+    //    void getReviewsAsMemberWithLike() throws Exception {
+    //        // given
+    //        Long postId = 1L;
+    //        String token = "Bearer test-token";
+    //
+    //        List<PostReviewWithLikeResponse> mockReviews = List.of(
+    //                PostReviewWithLikeResponse.builder()
+    //                        .reviewId(1L)
+    //                        .userId(UUID.randomUUID())
+    //                        .profile("profile1.jpg")
+    //                        .nickname("작성자1")
+    //                        .content("내용1")
+    //                        .likeCount(5)
+    //                        .likedByCurrentUser(true)
+    //                        .build(),
+    //                PostReviewWithLikeResponse.builder()
+    //                        .reviewId(2L)
+    //                        .userId(UUID.randomUUID())
+    //                        .profile("profile2.jpg")
+    //                        .nickname("작성자2")
+    //                        .content("내용2")
+    //                        .likeCount(3)
+    //                        .likedByCurrentUser(false)
+    //                        .build()
+    //        );
+    //
+    //        Mockito.when(postReviewService.getReviewsByPostId(
+    //                eq(postId),
+    //                eq(Long.MAX_VALUE),
+    //                eq(Integer.MAX_VALUE),
+    //                eq(10),
+    //                eq("latest"),
+    //                eq(token)
+    //        )).thenReturn(mockReviews);
+    //
+    //        // when & then
+    //        mockMvc.perform(get("/api/posts/{id}/reviews", postId)
+    //                        .header("Authorization", token))
+    //                .andExpect(status().isOk())
+    //                .andExpect(jsonPath("$.code").value(RsCode.SUCCESS.getCode()))
+    //                .andExpect(jsonPath("$.data[0].likedByCurrentUser").value(true))
+    //                .andExpect(jsonPath("$.data[1].likedByCurrentUser").value(false));
+    //    }
 
 }

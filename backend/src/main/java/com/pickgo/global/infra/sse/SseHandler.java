@@ -82,9 +82,9 @@ public class SseHandler {
         SseEmitter emitter = getEmitter(connectionId);
 
         emitter.send(
-                SseEmitter.event()
-                        .name(eventName)
-                        .data(data)
+            SseEmitter.event()
+                .name(eventName)
+                .data(data)
         );
     }
 

@@ -1,19 +1,21 @@
 package com.pickgo.global.s3;
 
-import com.pickgo.global.exception.BusinessException;
-import com.pickgo.global.response.RsCode;
-import lombok.RequiredArgsConstructor;
+import java.net.URI;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.pickgo.global.exception.BusinessException;
+import com.pickgo.global.response.RsCode;
+
+import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
-import java.net.URI;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +34,10 @@ public class AwsS3Uploader implements S3Uploader {
         String fileName = dirName + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .contentType(file.getContentType())
-                .build();
+            .bucket(bucketName)
+            .key(fileName)
+            .contentType(file.getContentType())
+            .build();
 
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
@@ -51,9 +53,9 @@ public class AwsS3Uploader implements S3Uploader {
     public void delete(String url) {
         String key = URI.create(url).getPath().substring(1);
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .build();
+            .bucket(bucketName)
+            .key(key)
+            .build();
 
         try {
             s3Client.deleteObject(deleteRequest);

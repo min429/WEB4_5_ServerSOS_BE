@@ -1,8 +1,9 @@
 package com.pickgo.domain.post.post.entity;
 
+import org.springframework.data.domain.Sort;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.data.domain.Sort;
 
 @AllArgsConstructor
 @Getter

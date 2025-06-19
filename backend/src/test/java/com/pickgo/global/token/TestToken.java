@@ -7,15 +7,15 @@ import org.springframework.stereotype.Component;
 @Profile("test")
 @Component
 public class TestToken {
-	@Value("${custom.jwt.admin_token}")
-	public String adminToken;
+    @Value("${custom.jwt.admin_token}")
+    public String adminToken;
 
-	@Value("${custom.jwt.user_token}")
-	public String userToken;
+    @Value("${custom.jwt.user_token}")
+    public String userToken;
 
-	@Value("${custom.jwt.expired_token}")
-	public String expiredToken;
+    @Value("${custom.jwt.expired_token}")
+    public String expiredToken;
 
-	@Value("${custom.jwt.test_entry_token}")
-	public String entryToken;
+    @Value("${custom.jwt.test_entry_token}")
+    public String entryToken;
 }

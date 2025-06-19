@@ -1,11 +1,12 @@
 package com.pickgo.domain.post.review.dto;
 
+import java.util.UUID;
+
 import com.pickgo.domain.post.review.entity.Review;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
@@ -22,13 +23,13 @@ public class PostReviewWithLikeResponse {
 
     public static PostReviewWithLikeResponse fromEntity(Review review, boolean likedByCurrentUser) {
         return PostReviewWithLikeResponse.builder()
-                .reviewId(review.getId())
-                .userId(review.getMember().getId())
-                .profile(review.getMember().getProfile())
-                .nickname(review.getMember().getNickname())
-                .content(review.getContent())
-                .likeCount(review.getLikeCount())
-                .likedByCurrentUser(likedByCurrentUser)
-                .build();
+            .reviewId(review.getId())
+            .userId(review.getMember().getId())
+            .profile(review.getMember().getProfile())
+            .nickname(review.getMember().getNickname())
+            .content(review.getContent())
+            .likeCount(review.getLikeCount())
+            .likedByCurrentUser(likedByCurrentUser)
+            .build();
     }
 }

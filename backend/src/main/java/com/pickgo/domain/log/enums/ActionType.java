@@ -26,7 +26,6 @@ public enum ActionType {
     PAYMENT_FAILED("결제 실패"),
     PAYMENT_CANCELED("결제 취소"),
 
-
     // Post
     POST_CREATED("게시글 생성"),
     POST_UPDATED("게시글 수정"),
@@ -44,4 +43,4 @@ public enum ActionType {
     ActionType(String description) {
         this.description = description;
     }
-    }
+}

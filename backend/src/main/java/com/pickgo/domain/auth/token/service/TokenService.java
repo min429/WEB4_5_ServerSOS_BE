@@ -38,6 +38,20 @@ public class TokenService {
     @Value("${custom.http.secure}")
     private boolean secure;
 
+    private static Map<String, Object> genEntryTokenClaims(Long performanceSessionId, UUID userId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("performance_session_id", performanceSessionId);
+        claims.put("user_id", userId);
+        return claims;
+    }
+
+    private static Map<String, Object> genAuthTokenClaims(Member member) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", member.getId().toString());
+        claims.put("authority", member.getAuthority().toString());
+        return claims;
+    }
+
     @Transactional(readOnly = true)
     public TokenDetailResponse createAccessToken(String refreshToken, HttpServletResponse response) {
         if (!jwtProvider.isValidToken(refreshToken)) {
@@ -61,7 +75,7 @@ public class TokenService {
     public void createRefreshToken(Member member, HttpServletResponse response) {
         String newRefreshToken = genRefreshToken(member);
         redisRefreshTokenRepository.save(member.getId(), newRefreshToken,
-                Duration.ofMinutes(refreshTokenExpirationMinutes));
+            Duration.ofMinutes(refreshTokenExpirationMinutes));
         addRefreshTokenCookie(response, newRefreshToken);
     }
 
@@ -72,17 +86,17 @@ public class TokenService {
 
     public String genAccessToken(Member member) {
         return jwtProvider.generateToken(member.getId().toString(), Duration.ofMinutes(accessTokenExpirationMinutes),
-                genAuthTokenClaims(member));
+            genAuthTokenClaims(member));
     }
 
     public String genRefreshToken(Member member) {
         return jwtProvider.generateToken(member.getId().toString(), Duration.ofMinutes(refreshTokenExpirationMinutes),
-                genAuthTokenClaims(member));
+            genAuthTokenClaims(member));
     }
 
     public String genEntryToken(Long performanceSessionId, UUID userId) {
         return jwtProvider.generateToken(userId.toString(), Duration.ofMinutes(entryTokenExpirationMinutes),
-                genEntryTokenClaims(performanceSessionId, userId));
+            genEntryTokenClaims(performanceSessionId, userId));
     }
 
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
@@ -107,19 +121,5 @@ public class TokenService {
             .build();
 
         response.setHeader("Set-Cookie", cookie.toString());
-    }
-
-    private static Map<String, Object> genEntryTokenClaims(Long performanceSessionId, UUID userId) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("performance_session_id", performanceSessionId);
-        claims.put("user_id", userId);
-        return claims;
-    }
-
-    private static Map<String, Object> genAuthTokenClaims(Member member) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", member.getId().toString());
-        claims.put("authority", member.getAuthority().toString());
-        return claims;
     }
 }

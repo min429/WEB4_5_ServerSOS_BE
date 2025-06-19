@@ -1,10 +1,12 @@
 package com.pickgo.domain.performance.performance.scheduler;
 
-import com.pickgo.domain.performance.performance.service.PerformanceService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.pickgo.domain.performance.performance.service.PerformanceService;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

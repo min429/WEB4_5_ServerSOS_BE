@@ -27,8 +27,8 @@ public class TokenController {
     @Operation(summary = "액세스 토큰 재발급")
     @PostMapping
     public RsData<TokenDetailResponse> renewToken(
-            @CookieValue(value = "refreshToken") String refreshToken,
-            HttpServletResponse response
+        @CookieValue(value = "refreshToken") String refreshToken,
+        HttpServletResponse response
     ) {
         return RsData.from(CREATED, tokenService.createAccessToken(refreshToken, response));
     }

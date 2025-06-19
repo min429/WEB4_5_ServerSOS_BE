@@ -36,80 +36,78 @@ import jakarta.servlet.http.HttpServletResponse;
 @ExtendWith(MockitoExtension.class)
 class KakaoServiceTest {
 
-	@Mock
-	private RestTemplate restTemplate;
-	@Mock
-	private TokenService tokenService;
-	@Mock
-	private MemberService memberService;
-	@Mock
-	private HttpServletRequest request;
-	@Mock
-	private HttpServletResponse response;
-	@Mock
-	private LogWriter logWriter;
-	@Mock
-	private LogContextUtil logContextUtil;
+    private final String email = "kakao@example.com";
+    private final String frontendUrl = "http://localhost:3000";
+    private final UUID userId = UUID.randomUUID();
+    private final KakaoUserInfo.KakaoAccount.Profile kakaoProfile = new KakaoUserInfo.KakaoAccount.Profile("닉네임",
+        "http://profile.img");
+    private final KakaoUserInfo.KakaoAccount kakaoAccount = new KakaoUserInfo.KakaoAccount(email, kakaoProfile);
+    private final KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(1L, kakaoAccount);
+    @Mock
+    private RestTemplate restTemplate;
+    @Mock
+    private TokenService tokenService;
+    @Mock
+    private MemberService memberService;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private HttpServletResponse response;
+    @Mock
+    private LogWriter logWriter;
+    @Mock
+    private LogContextUtil logContextUtil;
+    @InjectMocks
+    private KakaoService kakaoService;
 
-	@InjectMocks
-	private KakaoService kakaoService;
+    private Member getMockMember() {
+        return Member.builder()
+            .id(userId)
+            .email(email)
+            .password("")
+            .nickname(kakaoProfile.nickname())
+            .socialProvider(KAKAO)
+            .build();
+    }
 
-	private final String email = "kakao@example.com";
-	private final String frontendUrl = "http://localhost:3000";
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(kakaoService, "tokenUri", "https://kauth.kakao.com/oauth/token");
+        ReflectionTestUtils.setField(kakaoService, "apiKey", "test-api-key");
+        ReflectionTestUtils.setField(kakaoService, "redirectUri",
+            "http://localhost:8080/api/oauth/kakao/login/redirect");
+        ReflectionTestUtils.setField(kakaoService, "userInfoUri", "https://kapi.kakao.com/v2/user/me");
+        ReflectionTestUtils.setField(kakaoService, "authorizeUri", "https://kauth.kakao.com/oauth/authorize");
+        ReflectionTestUtils.setField(kakaoService, "profile", "https://default.profile.img");
+    }
 
-	private final UUID userId = UUID.randomUUID();
-	private final KakaoUserInfo.KakaoAccount.Profile kakaoProfile = new KakaoUserInfo.KakaoAccount.Profile("닉네임",
-		"http://profile.img");
-	private final KakaoUserInfo.KakaoAccount kakaoAccount = new KakaoUserInfo.KakaoAccount(email, kakaoProfile);
-	private final KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(1L, kakaoAccount);
+    @Test
+    @DisplayName("카카오 로그인 성공 시 리다이렉트 반환 및 토큰 발급")
+    void kakaoLogin_success() {
+        // given
+        String code = "auth-code";
+        String accessToken = "access-token";
+        Member member = getMockMember();
+        KakaoToken kakaoToken = new KakaoToken(accessToken, "bearer", "refresh", 3600L, null, 86400L);
+        LogContext mockLogContext = new LogContext("testUrl", "testAction", "testId",
+            ActorType.SYSTEM); // 가짜 로그 컨텍스트 객체
 
-	private Member getMockMember() {
-		return Member.builder()
-			.id(userId)
-			.email(email)
-			.password("")
-			.nickname(kakaoProfile.nickname())
-			.socialProvider(KAKAO)
-			.build();
-	}
+        when(restTemplate.postForEntity(anyString(), any(), eq(KakaoToken.class)))
+            .thenReturn(ResponseEntity.ok(kakaoToken)); // kakao token 요청 응답
 
-	@BeforeEach
-	void setUp() {
-		ReflectionTestUtils.setField(kakaoService, "tokenUri", "https://kauth.kakao.com/oauth/token");
-		ReflectionTestUtils.setField(kakaoService, "apiKey", "test-api-key");
-		ReflectionTestUtils.setField(kakaoService, "redirectUri",
-			"http://localhost:8080/api/oauth/kakao/login/redirect");
-		ReflectionTestUtils.setField(kakaoService, "userInfoUri", "https://kapi.kakao.com/v2/user/me");
-		ReflectionTestUtils.setField(kakaoService, "authorizeUri", "https://kauth.kakao.com/oauth/authorize");
-		ReflectionTestUtils.setField(kakaoService, "profile", "https://default.profile.img");
-	}
+        when(restTemplate.postForEntity(anyString(), any(), eq(KakaoUserInfo.class)))
+            .thenReturn(ResponseEntity.ok(kakaoUserInfo)); // kakao user info 응답
 
-	@Test
-	@DisplayName("카카오 로그인 성공 시 리다이렉트 반환 및 토큰 발급")
-	void kakaoLogin_success() {
-		// given
-		String code = "auth-code";
-		String accessToken = "access-token";
-		Member member = getMockMember();
-		KakaoToken kakaoToken = new KakaoToken(accessToken, "bearer", "refresh", 3600L, null, 86400L);
-		LogContext mockLogContext = new LogContext("testUrl", "testAction", "testId", ActorType.SYSTEM); // 가짜 로그 컨텍스트 객체
+        when(memberService.getEntity(email)).thenThrow(new BusinessException(MEMBER_NOT_FOUND));
+        when(memberService.saveEntity(any(Member.class))).thenReturn(member); // 기존 회원 없음 → 신규 저장
 
-		when(restTemplate.postForEntity(anyString(), any(), eq(KakaoToken.class)))
-			.thenReturn(ResponseEntity.ok(kakaoToken)); // kakao token 요청 응답
+        when(logContextUtil.extract()).thenReturn(mockLogContext);
 
-		when(restTemplate.postForEntity(anyString(), any(), eq(KakaoUserInfo.class)))
-			.thenReturn(ResponseEntity.ok(kakaoUserInfo)); // kakao user info 응답
+        // when
+        RedirectView redirectView = kakaoService.login(code, frontendUrl, response);
 
-		when(memberService.getEntity(email)).thenThrow(new BusinessException(MEMBER_NOT_FOUND));
-		when(memberService.saveEntity(any(Member.class))).thenReturn(member); // 기존 회원 없음 → 신규 저장
-
-		when(logContextUtil.extract()).thenReturn(mockLogContext);
-
-		// when
-		RedirectView redirectView = kakaoService.login(code, frontendUrl, response);
-
-		// then
-		assertThat(redirectView.getUrl()).isEqualTo(frontendUrl);
-		verify(tokenService).createRefreshToken(eq(member), eq(response));
-	}
+        // then
+        assertThat(redirectView.getUrl()).isEqualTo(frontendUrl);
+        verify(tokenService).createRefreshToken(eq(member), eq(response));
+    }
 }

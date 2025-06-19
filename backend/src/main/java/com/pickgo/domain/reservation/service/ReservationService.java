@@ -1,5 +1,20 @@
 package com.pickgo.domain.reservation.service;
 
+import static com.pickgo.global.response.RsCode.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.pickgo.domain.log.enums.ActionType;
 import com.pickgo.domain.member.member.entity.Member;
 import com.pickgo.domain.member.member.repository.MemberRepository;
@@ -21,28 +36,14 @@ import com.pickgo.domain.reservation.dto.response.ReservationSimpleResponse;
 import com.pickgo.domain.reservation.entity.Reservation;
 import com.pickgo.domain.reservation.enums.ReservationStatus;
 import com.pickgo.domain.reservation.repository.ReservationRepository;
+import com.pickgo.global.exception.BusinessException;
 import com.pickgo.global.logging.dto.LogContext;
 import com.pickgo.global.logging.util.LogContextUtil;
-import com.pickgo.global.response.PageResponse;
-import com.pickgo.global.exception.BusinessException;
 import com.pickgo.global.logging.util.LogWriter;
 import com.pickgo.global.response.PageResponse;
 import com.pickgo.global.response.RsCode;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import static com.pickgo.global.response.RsCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -59,10 +60,9 @@ public class ReservationService {
     private final PerformanceAreaRepository areaRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-
     public ReservationSimpleResponse createReservation(
-            UUID memberId,
-            ReservationCreateRequest request
+        UUID memberId,
+        ReservationCreateRequest request
     ) {
         // 1. Member, Performance 검증 및 데이터 가져오기
         Member member = validateMember(memberId);
@@ -76,10 +76,11 @@ public class ReservationService {
         return createReservationWithSeats(member, session, seats);
     }
 
-    private List<ReservedSeat> generateReservedSeats(PerformanceSession session, List<ReservationCreateRequest.SeatRequest> seatRequests) {
+    private List<ReservedSeat> generateReservedSeats(PerformanceSession session,
+        List<ReservationCreateRequest.SeatRequest> seatRequests) {
         return seatRequests.stream()
-                .map(dto -> createReservedSeat(session, dto))
-                .toList();
+            .map(dto -> createReservedSeat(session, dto))
+            .toList();
     }
 
     private ReservedSeat createReservedSeat(PerformanceSession session, ReservationCreateRequest.SeatRequest dto) {
@@ -88,30 +89,30 @@ public class ReservationService {
         validateSeatPosition(area, dto);
 
         ReservedSeat seat = ReservedSeat.builder()
-                .performanceArea(area)
-                .row(String.valueOf((char) ('A' + dto.row() - 1)))
-                .number(dto.column())
-                .status(SeatStatus.PENDING)
-                .build();
+            .performanceArea(area)
+            .row(String.valueOf((char)('A' + dto.row() - 1)))
+            .number(dto.column())
+            .status(SeatStatus.PENDING)
+            .build();
 
         seat.setPerformanceSession(session);
         return seat;
     }
 
     private ReservationSimpleResponse createReservationWithSeats(
-            Member member, PerformanceSession session, List<ReservedSeat> seats
+        Member member, PerformanceSession session, List<ReservedSeat> seats
     ) {
         try {
             int totalPrice = seats.stream()
-                    .mapToInt(seat -> seat.getPerformanceArea().getPrice()).sum();
+                .mapToInt(seat -> seat.getPerformanceArea().getPrice()).sum();
 
             // 예약 생성
             Reservation reservation = Reservation.builder()
-                    .member(member)
-                    .performanceSession(session)
-                    .status(ReservationStatus.RESERVED)
-                    .totalPrice(totalPrice)
-                    .build();
+                .member(member)
+                .performanceSession(session)
+                .status(ReservationStatus.RESERVED)
+                .totalPrice(totalPrice)
+                .build();
 
             // 연관관계 세팅
             member.addReservation(reservation);
@@ -124,7 +125,6 @@ public class ReservationService {
             // 좌석 및 예약 저장
             reservationRepository.save(reservation);
             seatRepository.saveAll(seats);
-
 
             // 예약 직후에 이벤트를 발행 (좌석이 점유되었음을 알림)
             seats.forEach(seat -> {
@@ -162,7 +162,7 @@ public class ReservationService {
 
         // 오직 PAID 또는 CANCELED 상태만 조회
         Page<Reservation> reservations = reservationRepository
-                .findByMemberIdAndStatusIn(memberId, List.of(ReservationStatus.PAID, ReservationStatus.CANCELED), pageable);
+            .findByMemberIdAndStatusIn(memberId, List.of(ReservationStatus.PAID, ReservationStatus.CANCELED), pageable);
 
         return PageResponse.from(reservations, ReservationSimpleResponse::from);
     }
@@ -173,7 +173,7 @@ public class ReservationService {
      */
     public void deleteReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new BusinessException(RsCode.NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(RsCode.NOT_FOUND));
 
         // 1. 상태 체크 (RESERVED 상태인 자리만 취소가능)
         if (reservation.getStatus() != ReservationStatus.RESERVED) {
@@ -185,7 +185,7 @@ public class ReservationService {
 
         // 3. 결제 삭제
         paymentRepository.findByReservation(reservation)
-                .ifPresent(paymentRepository::delete);
+            .ifPresent(paymentRepository::delete);
 
         // 4. 예약 삭제
         reservationRepository.delete(reservation);
@@ -225,7 +225,7 @@ public class ReservationService {
 
     private Payment validatePayment(Reservation reservation) {
         return paymentRepository.findByReservation(reservation).orElseThrow(
-                () -> new BusinessException(NOT_FOUND)
+            () -> new BusinessException(NOT_FOUND)
         );
     }
 
@@ -238,37 +238,37 @@ public class ReservationService {
 
     private void validateSeatPosition(PerformanceArea area, ReservationCreateRequest.SeatRequest dto) {
         if (dto.row() < 1 || dto.row() > area.getRowCount()
-                || dto.column() < 1 || dto.column() > area.getColCount()) {
+            || dto.column() < 1 || dto.column() > area.getColCount()) {
             throw new BusinessException(INVALID_SEAT_POSITION);
         }
     }
 
     private PerformanceArea validateArea(Long areaId) {
         return areaRepository.findById(areaId)
-                .orElseThrow(() -> new BusinessException(NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(NOT_FOUND));
     }
 
     private void validateReservationTime(PerformanceSession performanceSession) {
         if (performanceSession.getReserveOpenAt().isAfter(LocalDateTime.now())
-                || performanceSession.getPerformanceTime().isBefore(LocalDateTime.now())) {
+            || performanceSession.getPerformanceTime().isBefore(LocalDateTime.now())) {
             throw new BusinessException(RESERVATION_UNAVAILABLE);
         }
     }
 
     private PerformanceSession validateSession(Long performanceSessionId) {
         return sessionRepository.findById(performanceSessionId).orElseThrow(
-                () -> new BusinessException(PERFORMANCE_SESSION_NOT_FOUND)
+            () -> new BusinessException(PERFORMANCE_SESSION_NOT_FOUND)
         );
     }
 
     private Member validateMember(UUID memberId) {
         return memberRepository.findById(memberId).orElseThrow(
-                () -> new BusinessException(MEMBER_NOT_FOUND)
+            () -> new BusinessException(MEMBER_NOT_FOUND)
         );
     }
 
     private Reservation validateReservation(Long reservationId) {
         return reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new BusinessException(RESERVATION_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(RESERVATION_NOT_FOUND));
     }
 }

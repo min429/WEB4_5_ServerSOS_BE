@@ -23,6 +23,13 @@ public class RedisQueueRepository implements QueueRepository {
     private final StringRedisTemplate redisTemplate;
 
     /**
+     * 대기열 키 반환
+     */
+    private static String getWaitingKey(Long performanceSessionId) {
+        return WAITING_LINE_PREFIX + ":performance_session_id:" + performanceSessionId;
+    }
+
+    /**
      * 대기열에 커넥션을 추가
      */
     @Override
@@ -64,8 +71,8 @@ public class RedisQueueRepository implements QueueRepository {
         }
 
         return popped.stream()
-                .map(TypedTuple::getValue)
-                .toList();
+            .map(TypedTuple::getValue)
+            .toList();
     }
 
     /**
@@ -141,12 +148,5 @@ public class RedisQueueRepository implements QueueRepository {
         String waitingKey = getWaitingKey(performanceSessionId);
         Double score = redisTemplate.opsForZSet().score(waitingKey, connectionId);
         return score != null;
-    }
-
-    /**
-     * 대기열 키 반환
-     */
-    private static String getWaitingKey(Long performanceSessionId) {
-        return WAITING_LINE_PREFIX + ":performance_session_id:" + performanceSessionId;
     }
 }

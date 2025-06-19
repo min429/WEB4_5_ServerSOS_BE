@@ -1,23 +1,24 @@
 package com.pickgo.domain.performance.area.seat.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @Slf4j
 public class SeatNotificationService {
 
-    //공연 세션 ID별로 SSE 구독자 리스트 저장
-    private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
     // SSE 연결 타임아웃: 30분
     private static final Long TIMEOUT = 30L * 60 * 1000L;
+    //공연 세션 ID별로 SSE 구독자 리스트 저장
+    private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     /**
      * 클라이언트가 특정 세션의 좌석 상태를 실시간으로 구독할 때 호출

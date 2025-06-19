@@ -1,18 +1,26 @@
 package com.pickgo.domain.performance.performance.util;
 
-import com.pickgo.domain.performance.area.area.entity.AreaGrade;
-import com.pickgo.domain.performance.area.area.entity.AreaName;
-import com.pickgo.domain.performance.area.area.entity.PerformanceArea;
-import com.pickgo.domain.performance.kopis.dto.KopisPerformanceDetailResponse;
-import com.pickgo.domain.performance.performance.entity.*;
-import com.pickgo.domain.performance.venue.entity.Venue;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.pickgo.domain.performance.area.area.entity.AreaGrade;
+import com.pickgo.domain.performance.area.area.entity.AreaName;
+import com.pickgo.domain.performance.area.area.entity.PerformanceArea;
+import com.pickgo.domain.performance.kopis.dto.KopisPerformanceDetailResponse;
+import com.pickgo.domain.performance.performance.entity.Performance;
+import com.pickgo.domain.performance.performance.entity.PerformanceIntro;
+import com.pickgo.domain.performance.performance.entity.PerformanceSession;
+import com.pickgo.domain.performance.performance.entity.PerformanceState;
+import com.pickgo.domain.performance.performance.entity.PerformanceType;
+import com.pickgo.domain.performance.venue.entity.Venue;
 
 public class PerformanceMapper {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
@@ -20,18 +28,18 @@ public class PerformanceMapper {
     // 공연 생성
     public static Performance toPerformance(KopisPerformanceDetailResponse response, Venue venue) {
         Performance performance = Performance.builder()
-                .name(response.getName())
-                .startDate(LocalDate.parse(response.getStartDate(), DATE_TIME_FORMATTER))
-                .endDate(LocalDate.parse(response.getEndDate(), DATE_TIME_FORMATTER))
-                .runtime(response.getRuntime())
-                .poster(response.getPoster())
-                .state(convertState(response.getState()))
-                .minAge(response.getMinAge())
-                .casts(response.getCasts())
-                .type(convertType(response.getType()))
-                .venue(venue)
-                .performanceIntros(toPerformanceIntros(response.getIntroImages()))
-                .build();
+            .name(response.getName())
+            .startDate(LocalDate.parse(response.getStartDate(), DATE_TIME_FORMATTER))
+            .endDate(LocalDate.parse(response.getEndDate(), DATE_TIME_FORMATTER))
+            .runtime(response.getRuntime())
+            .poster(response.getPoster())
+            .state(convertState(response.getState()))
+            .minAge(response.getMinAge())
+            .casts(response.getCasts())
+            .type(convertType(response.getType()))
+            .venue(venue)
+            .performanceIntros(toPerformanceIntros(response.getIntroImages()))
+            .build();
 
         for (PerformanceIntro intro : performance.getPerformanceIntros()) {
             intro.setPerformance(performance);
@@ -71,10 +79,10 @@ public class PerformanceMapper {
     // 소개 이미지 생성
     private static List<PerformanceIntro> toPerformanceIntros(List<String> introDtos) {
         return introDtos.stream()
-                .map(introDto -> PerformanceIntro.builder()
-                        .introImage(introDto)
-                        .build())
-                .toList();
+            .map(introDto -> PerformanceIntro.builder()
+                .introImage(introDto)
+                .build())
+            .toList();
     }
 
     // 회차 생성
@@ -94,10 +102,10 @@ public class PerformanceMapper {
                     LocalDateTime reserveOpenAt = performanceTime.minusDays(30);
 
                     sessions.add(PerformanceSession.builder()
-                            .performance(performance)
-                            .performanceTime(performanceTime)
-                            .reserveOpenAt(reserveOpenAt)
-                            .build());
+                        .performance(performance)
+                        .performanceTime(performanceTime)
+                        .reserveOpenAt(reserveOpenAt)
+                        .build());
                 }
             }
             date = date.plusDays(1);
@@ -126,8 +134,8 @@ public class PerformanceMapper {
 
             // 시간 문자열을 LocalTime 리스트로 변환
             List<LocalTime> times = Arrays.stream(timesPart.split(","))
-                    .map(PerformanceMapper::parseTime)
-                    .toList();
+                .map(PerformanceMapper::parseTime)
+                .toList();
 
             // 요일 문자열을 DayOfWeek 리스트로 변환: 월요일 ~ 수요일 -> [월, 화, 수]
             List<DayOfWeek> days = parseDays(daysPart);
@@ -187,6 +195,34 @@ public class PerformanceMapper {
         };
     }
 
+    // 구역 생성
+    private static List<PerformanceArea> createPerformanceAreas(Performance performance) {
+        List<AreaConfig> areaConfigs = List.of(
+            new AreaConfig(AreaName.VIP, AreaGrade.PREMIUM, 5, 20, 150000),
+            new AreaConfig(AreaName.A, AreaGrade.SPECIAL, 15, 10, 100000),
+            new AreaConfig(AreaName.B, AreaGrade.ROYAL, 15, 10, 120000),
+            new AreaConfig(AreaName.C, AreaGrade.SPECIAL, 15, 10, 100000),
+            new AreaConfig(AreaName.D, AreaGrade.NORMAL, 15, 30, 80000)
+        );
+
+        List<PerformanceArea> performanceAreas = new ArrayList<>();
+
+        for (AreaConfig config : areaConfigs) {
+            PerformanceArea area = PerformanceArea.builder()
+                .name(config.areaName)
+                .grade(config.areaGrade)
+                .price(config.price)
+                .rowCount(config.rowCount)
+                .colCount(config.colCount)
+                .performance(performance)
+                .build();
+
+            performanceAreas.add(area);
+        }
+
+        return performanceAreas;
+    }
+
     private static class AreaConfig {
         AreaName areaName;
         AreaGrade areaGrade;
@@ -201,33 +237,5 @@ public class PerformanceMapper {
             this.colCount = colCount;
             this.price = price;
         }
-    }
-
-    // 구역 생성
-    private static List<PerformanceArea> createPerformanceAreas(Performance performance) {
-        List<AreaConfig> areaConfigs = List.of(
-                new AreaConfig(AreaName.VIP, AreaGrade.PREMIUM, 5, 20, 150000),
-                new AreaConfig(AreaName.A, AreaGrade.SPECIAL, 15, 10, 100000),
-                new AreaConfig(AreaName.B, AreaGrade.ROYAL, 15, 10, 120000),
-                new AreaConfig(AreaName.C, AreaGrade.SPECIAL, 15, 10, 100000),
-                new AreaConfig(AreaName.D, AreaGrade.NORMAL, 15, 30, 80000)
-        );
-
-        List<PerformanceArea> performanceAreas = new ArrayList<>();
-
-        for (AreaConfig config : areaConfigs) {
-            PerformanceArea area = PerformanceArea.builder()
-                    .name(config.areaName)
-                    .grade(config.areaGrade)
-                    .price(config.price)
-                    .rowCount(config.rowCount)
-                    .colCount(config.colCount)
-                    .performance(performance)
-                    .build();
-
-            performanceAreas.add(area);
-        }
-
-        return performanceAreas;
     }
 }

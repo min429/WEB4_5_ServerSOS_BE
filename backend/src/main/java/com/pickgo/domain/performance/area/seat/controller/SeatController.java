@@ -1,14 +1,16 @@
 package com.pickgo.domain.performance.area.seat.controller;
 
-import com.pickgo.domain.performance.area.seat.service.SeatService;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import com.pickgo.domain.performance.area.seat.service.SeatService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/areas")
@@ -27,8 +29,5 @@ public class SeatController {
     public SseEmitter subscribe(@RequestParam Long sessionId) {
         return seatService.subscribeToSeatUpdates(sessionId);
     }
-
-
-
 
 }

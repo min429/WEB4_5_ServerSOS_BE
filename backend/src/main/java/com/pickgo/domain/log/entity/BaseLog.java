@@ -1,15 +1,24 @@
 package com.pickgo.domain.log.entity;
 
-import com.pickgo.domain.log.enums.ActionType;
-import com.pickgo.domain.log.enums.ActorType;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import com.pickgo.domain.log.enums.ActionType;
+import com.pickgo.domain.log.enums.ActorType;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @MappedSuperclass
@@ -48,7 +57,7 @@ public abstract class BaseLog {
     private LocalDateTime createdAt;
 
     public BaseLog(String actorId, ActorType actorType, ActionType action,
-                   String requestUri, String httpMethod, String description) {
+        String requestUri, String httpMethod, String description) {
         this.actorId = actorId;
         this.actorType = actorType;
         this.action = action;
