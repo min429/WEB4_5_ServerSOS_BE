@@ -126,16 +126,20 @@ public class QueueProcessorScheduler {
         // 대기열에 남아있는 전체 사용자 조회
         List<String> connectionIds = queueService.getLine(performanceSessionId);
 
-        // 대기열 상태 publish를 비동기로 수행
-        connectionIds.forEach(connectionId -> CompletableFuture.runAsync(() -> {
-            // 대기열 상태 조회
-            int position = queueService.getPosition(performanceSessionId, connectionId);
-            int totalCount = queueService.getSize(performanceSessionId);
+        // 총 인원 수
+        int totalCount = connectionIds.size();
 
-            // 대기열 상태 발행
-            WaitingState waitingState = WaitingState.of(position, totalCount, getRps());
-            queueService.publishWaitingState(performanceSessionId, connectionId, waitingState);
-        }, executorConfig.queueThreadPoolTaskExecutor()));
+        for (int i = 0; i < totalCount; i++) {
+            String connectionId = connectionIds.get(i);
+            int position = i + 1; // 대기 번호
+
+            // 대기열 상태 publish를 비동기로 수행
+            CompletableFuture.runAsync(() -> {
+                // 대기열 상태 발행
+                WaitingState waitingState = WaitingState.of(position, totalCount, getRps());
+                queueService.publishWaitingState(performanceSessionId, connectionId, waitingState);
+            }, executorConfig.queueThreadPoolTaskExecutor());
+        }
     }
 
     /**
