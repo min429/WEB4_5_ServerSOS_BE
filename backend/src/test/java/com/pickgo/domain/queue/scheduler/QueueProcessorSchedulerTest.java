@@ -67,8 +67,6 @@ class QueueProcessorSchedulerTest {
         when(queueService.getAllPerformanceSessionIds()).thenReturn(List.of(performanceSessionId));
         when(queueService.pollTopCount(eq(performanceSessionId), anyInt())).thenReturn(List.of(connectionId));
         when(queueService.getLine(performanceSessionId)).thenReturn(List.of(connectionId));
-        when(queueService.getPosition(performanceSessionId, connectionId)).thenReturn(1);
-        when(queueService.getSize(performanceSessionId)).thenReturn(1);
         when(entryCountDecider.decideEntryCount()).thenReturn(10);
 
         scheduler.process();
@@ -89,8 +87,6 @@ class QueueProcessorSchedulerTest {
         when(queueService.getAllPerformanceSessionIds()).thenReturn(List.of(performanceSessionId));
         when(queueService.pollTopCount(eq(performanceSessionId), anyInt())).thenReturn(List.of(connectionId));
         when(queueService.getLine(performanceSessionId)).thenReturn(List.of(connectionId));
-        when(queueService.getPosition(performanceSessionId, connectionId)).thenReturn(1);
-        when(queueService.getSize(performanceSessionId)).thenReturn(1);
         when(entryCountDecider.decideEntryCount()).thenReturn(10);
 
         scheduler.process();
