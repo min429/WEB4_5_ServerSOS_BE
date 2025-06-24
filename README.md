@@ -59,7 +59,7 @@ https://web4-5-serversos-be.pages.dev
 | **DevOps**   | Docker, GitHub Actions, AWS EC2, Cloudflare Pages                        |
 | **Frontend** | React, TypeScript, TailwindCSS                                           |
 | **Web Server** | Nginx (Reverse Proxy)                                                  |
-| **Testing** | Gradle, JUnit5, K6, Artiller                                              |
+| **Testing** | Gradle, JUnit5, K6, Artillery                                             |
 | **Communication** | Notion, Slack, Discord, figma, Swagger                              |
 <br>
 <div>
