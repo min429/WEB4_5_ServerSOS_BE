@@ -60,7 +60,8 @@ https://web4-5-serversos-be.pages.dev
 | **Frontend** | React, TypeScript, TailwindCSS                                           |
 | **Web Server** | Nginx (Reverse Proxy)                                                  |
 | **Testing** | Gradle, JUnit5, K6, Artillery                                             |
-| **Communication** | Notion, Slack, Discord, figma, Swagger                              |
+| **Specification** | Notion, Swagger(API)                                                |
+| **Communication** | Slack, Discord                                                      |
 <br>
 <div>
 <img src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white">
