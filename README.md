@@ -101,23 +101,23 @@ https://web4-5-serversos-be.pages.dev
 ---
 
 ## ERD
-![ERD_server_sos](https://github.com/user-attachments/assets/974bddbc-2775-4e06-b65d-72f768fd1e4c)
+![ERD_server_sos](https://github.com/user-attachments/assets/556c479a-be09-46a9-9af0-fe559b54a6b4)
 
 
 ## 시스템 아키텍처
-![image](https://github.com/user-attachments/assets/810f75a4-2436-4895-95e2-a733b4b60c70)
+![System Architecture](https://github.com/user-attachments/assets/59e7b6c7-5a21-4076-b037-9a0d8f9e5b81)
 
 
-### 전체 흐름 요약
+### 설명
 
-1. 사용자가 예매 페이지 접속
-2. **Nginx Reverse Proxy** → **Spring 서버 API 요청**
-3. 서버는 **MySQL, Redis** 기반으로 데이터 처리 및 응답
-4. **Redis Stream + SSE** → 실시간 좌석 상태 전파
-5. **대기열 입장**은 스케줄러 기반 처리, 사용자별 상태 전송
-6. **Prometheus**가 서버 및 JVM 상태 수집
-7. **Grafana** 대시보드에서 실시간 확인 (iframe 제공)
-8. **GitHub Actions** 자동 배포 → 각 EC2 인스턴스
+- Spring App, Database, Nginx, Prometheus, Grafana 등을 **Docker 컨테이너**로 구성
+- **Github Actions**를 통해 **Dockerfile**을 빌드하고 AWS EC2에 배포
+- **Nginx Reverse Proxy**를 통해 Spring 서버로 API 요청을 전달하고 응답
+- **Kopis API**를 통해 공연 데이터 수집, **Kakao API**를 통해 로그인, **Toss API**를 통해 결제 처리
+- **MySQL**에는 유저∙공연∙예약∙결제 등 저장, **Redis**에는 토큰∙대기열 등 저장
+- **SSE** → 실시간 좌석 상태, 대기열 정보 전송
+- **Prometheus**를 통해 서버 상태 수집
+- **Grafana** 대시보드를 통해 서버 리소스, 비즈니스 지표 모니터링
 
 ---
 
@@ -131,21 +131,11 @@ https://web4-5-serversos-be.pages.dev
 
 ---
 
-## 주요 기능 요약
-
-- 실시간 좌석 상태 반영 (SSE + Redis Stream)
-- 사용자 대기열 처리 로직
-- 서버 상태/지표 실시간 모니터링
-- GitHub Actions 기반 자동 배포 파이프라인
-- RESTful API 설계 + OAuth2 인증
-
----
-
 ## 핵심 기능 및 주요 구현
 
 ### 1. 대기열 시스템 (Queue System)
 
-[📘 상세 위키 보기](https://github.com/prgrms-web-devcourse-final-project/WEB4_5_ServerSOS_BE/wiki/%EB%8C%80%EA%B8%B0%EC%97%B4-%EA%B5%AC%ED%98%84)
+[📘 상세 위키 보기](https://github.com/min429/WEB4_5_ServerSOS_BE/wiki/%EB%8C%80%EA%B8%B0%EC%97%B4-%EA%B5%AC%ED%98%84)
 
 ![Queue Overview](https://github.com/user-attachments/assets/0975af57-8f3a-40db-93bd-3c1b376543a7)
 ![Queue State Flow](https://github.com/user-attachments/assets/8cbc3a20-416d-4a20-91f4-bfc27ac6b4e6)
@@ -197,8 +187,6 @@ https://web4-5-serversos-be.pages.dev
 ## API 명세
 [Swagger 문서 바로가기](https://api.team2.pick-go.shop/swagger-ui/index.html)
 
-[API 명세 Wiki 바로가기](https://github.com/prgrms-web-devcourse-final-project/WEB4_5_ServerSOS_BE/wiki/API-명세)
-
 ## 협업 규칙
 
 ### Git 브랜치 규칙
@@ -236,7 +224,7 @@ https://web4-5-serversos-be.pages.dev
         - 배포 시점에 `main` 브랜치로 병합
 
 ### 자바 컨벤션
-[컨벤션 Wiki 바로가기](https://github.com/prgrms-web-devcourse-final-project/WEB4_5_ServerSOS_BE/wiki/Code-Convention)
+[컨벤션 Wiki 바로가기](https://github.com/min429/WEB4_5_ServerSOS_BE/wiki/Code-Convention)
 
 ### 발표 자료
 [Canva](https://www.canva.com/design/DAGnMYYVAdM/kjcLF6v-9U2ETx7J82fTYg/view?utm_content=DAGnMYYVAdM&utm_campaign=designshare&utm_medium=link&utm_source=viewer)
