@@ -101,7 +101,7 @@ https://web4-5-serversos-be.pages.dev
 ---
 
 ## ERD
-![ERD_server_sos](https://github.com/user-attachments/assets/556c479a-be09-46a9-9af0-fe559b54a6b4)
+![ERD_server_sos](https://github.com/user-attachments/assets/99a07073-738b-4132-95e1-44e126009967)
 
 
 ## 시스템 아키텍처
@@ -114,8 +114,8 @@ https://web4-5-serversos-be.pages.dev
 - **Github Actions**를 통해 **Dockerfile**을 빌드하고 AWS EC2에 배포
 - **Nginx Reverse Proxy**를 통해 Spring 서버로 API 요청을 전달하고 응답
 - **Kopis API**를 통해 공연 데이터 수집, **Kakao API**를 통해 로그인, **Toss API**를 통해 결제 처리
-- **MySQL**에는 유저∙공연∙예약∙결제 등 저장, **Redis**에는 토큰∙대기열 등 저장
-- **SSE** → 실시간 좌석 상태, 대기열 정보 전송
+- **MySQL**에 유저∙공연∙예약∙결제 등 저장, **Redis**에 토큰∙대기열 등 저장
+- **SSE**를 통해 실시간 좌석 상태, 대기열 정보 전송
 - **Prometheus**를 통해 서버 상태 수집
 - **Grafana** 대시보드를 통해 서버 리소스, 비즈니스 지표 모니터링
 
