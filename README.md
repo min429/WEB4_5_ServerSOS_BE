@@ -53,28 +53,25 @@ https://web4-5-serversos-be.pages.dev
 
 | 영역          | 기술 구성                                                                   |
 |--------------|--------------------------------------------------------------------------|
-| **Backend**  | Java, Spring Boot, OAuth2                                                |
+| **Backend**  | Java, Spring Boot                                                        |
 | **Database** | MySQL, Redis (Stream, Sorted Set)                                        |
 | **Monitoring** | Grafana, Prometheus, Node Exporter, Spring Actuator, InfluxDB          |
-| **DevOps**   | Docker, GitHub Actions, AWS, Cloudflare Pages                            |
-| **Frontend** | React, TypeScript, Vite, TailwindCSS, Thymeleaf                          |
+| **DevOps**   | Docker, GitHub Actions, AWS EC2, Cloudflare Pages                        |
+| **Frontend** | React, TypeScript, TailwindCSS                                           |
 | **Web Server** | Nginx (Reverse Proxy)                                                  |
-| **Testing** | Gradle, JUnit5, K6                                                        |
+| **Testing** | Gradle, JUnit5, K6, Artiller                                              |
 | **Communication** | Notion, Slack, Discord, figma, Swagger                              |
 <br>
 <div>
 <img src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white">
 <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 <img src="https://img.shields.io/badge/spring data JPA-6DB33F?style=for-the-badge&logo=java&logoColor=white">
-<img src="https://img.shields.io/badge/OAuth2.0-000000?style=for-the-badge&logo=OAuth2.0&logoColor=white">
 <br>
 <img src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white">
 <img src="https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white">
  <br>
 <img src="https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white">
 <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white">
-<img src="https://img.shields.io/badge/Node Exporter-E6522C?style=for-the-badge&logo=Node Exporter&logoColor=white">
-<img src="https://img.shields.io/badge/Spring Actuator-6DB33F?style=for-the-badge&logo=Spring Actuator&logoColor=white">
 <img src="https://img.shields.io/badge/InfluxDB-22ADF6?style=for-the-badge&logo=InfluxDB&logoColor=white">
 <br>
 <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white">
@@ -84,9 +81,7 @@ https://web4-5-serversos-be.pages.dev
 <br>
 <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB">
 <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white">
-<img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white">
 <img src="https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white">
-<img src="https://img.shields.io/badge/thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white">
 <br>
 <img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
 <img src="https://img.shields.io/badge/nginxproxymanager-F15833?style=for-the-badge&logo=nginxproxymanager&logoColor=white">
